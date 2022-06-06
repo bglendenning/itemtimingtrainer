@@ -56,10 +56,8 @@
 
       #targetObject {
         background-color: #5f8258;
-        height: 25px;
         cursor: pointer;
         position: absolute;
-        width: 25px;
       }
 
       #timer div {
@@ -316,6 +314,8 @@
           this.scoreValue = config.target.scoreValue;
           // dom
           this.targetEl = config.target.elements.target;
+          this.targetEl.style.width = `${this.width}px`;
+          this.targetEl.style.height = `${this.height}px`;
           this.checkboxEl = config.target.elements.checkbox;
           this.checkboxEl.checked = true;
           // listeners
