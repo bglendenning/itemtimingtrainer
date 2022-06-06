@@ -12,13 +12,9 @@
         font-family: sans-serif;
       }
 
-      body a {
+      a {
         color: #4d7175;
         text-decoration: none;
-      }
-
-      body a:hover {
-        color: #6f9397;
       }
 
       .item {
@@ -28,7 +24,7 @@
         margin: 0 20px 0 20px;
       }
 
-      .item:hover, #targetObject:hover {
+      .item:hover, #targetObject:hover, a:hover {
         opacity: 0.8;
       }
 
@@ -47,21 +43,13 @@
         margin-top: 20px;
       }
 
-      #logScoreHigh {
-        float: left;
-      }
-
-      #logScoreSession {
-        text-align: right;
-      }
-
       #logText {
         height: 300px;
         margin: 20px auto 0 auto;
         overflow: auto;
       }
 
-      #target {
+      #targetToggle {
         margin-top: 20px;
         text-align: center;
       }
@@ -133,11 +121,11 @@
     <div id='targetObject'></div>
     <div id='timer'>
       <div id='timerAdmin'>
-        <span id='timerStart'><a href='#'>start</a></span>
-        <span id='timerStop'><a href='#'>stop</a></span>
-        <span id='timerReset'><a href='#'>reset</a></span>
-        <span id='timerMultiplierDecrease'><a href='#' title='decrease timer rate'>-</a></span>
-        <span id='timerMultiplierIncrease'><a href='#' title='increase timer rate'>+</a></span>
+        <a href='javascript:void(0)' id='timerStart'>start</a>
+        <a href='javascript:void(0)' id='timerStop'>stop</a>
+        <a href='javascript:void(0)' id='timerReset'>reset</a>
+        <a href='javascript:void(0)' id='timerMultiplierDecrease'>-</a>
+        <a href='javascript:void(0)' id='timerMultiplierIncrease'>+</a>
       </div>
       <div class='clear'></div>
       <div id='timerDisplay'>
@@ -147,31 +135,20 @@
     </div>
     <div id='items'></div>
     <div class='clear'></div>
-    <div id='target'>
-      <div id='targetForm'>
-        <form>
-          <label><input type='checkbox' id='targetFormCheck'> Enable randomized target.</label>
-        </form>
-      </div>
+    <div id='targetToggle'>
+      <label><input type='checkbox' id='targetFormCheck'> Enable randomized target.</label>
     </div>
     <div id='log'>
       <div id='scoreHigh'>high score: 0000000000</div>
       <div id='scoreSession'>score: 0000000000</div>
       <div id='logText'>
         <h1>Instructions</h1>
+        <p>Use start, stop, and reset to start, stop, and reset the trainer. Use - and + to manipulate the time speed multiplier.</p>
         <p>Click the large colored squares to simulate picking up items. Each item pick up is worth its respawn time in points multiplied by the current time speed multiplier value.</p>
-        <p>Click the green square to earn points while waiting for items to respawn. each green square clicked is worth 1 point multiplied by the current time speed multiplier value.</p>
-        <h1>controls</h1>
-        <ul>
-          <li><b>start</b>: starts the timer</li>
-          <li><b>stop</b>: stops the timer</li>
-          <li><b>reset</b>: resets the timer and the current session score to 0</li>
-          <li><b>-/+</b>: decrease or increase the rate at which the timer counts up</li>
-          <li><b>enable randomized target</b>: show or hide green target square</li>
-        </ul>
+        <p>Click the small green square to earn points while waiting for items to respawn. each green square clicked is worth 1 point multiplied by the current time speed multiplier value.</p>
       </div>
       <div>
-        <a id='logClear' href='#'>clear log</a>
+        <a id='logClear' href='javascript:void(0)'>clear log</a>
       </div>
     </div>
 
@@ -271,8 +248,6 @@
           ]
         }
       };
-
-      let time = 0;
 
       class Logger {
         constructor() {
