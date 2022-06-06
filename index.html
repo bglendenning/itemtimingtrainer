@@ -66,6 +66,7 @@
         background-color: #5f8258;
         cursor: pointer;
         position: absolute;
+        z-index: 1;
       }
 
       #timer div {
@@ -351,6 +352,7 @@
         }
 
         click = (event) => {
+          event.stopPropagation();
           if (timer.active && this.checkboxEl.checked) {
             this.setRandomPosition();
             score.add(this.scoreValue);
