@@ -18,10 +18,13 @@
       }
 
       .item {
+        color: #010101;
         cursor: pointer;
-        height: 100px;
-        width: 100px;
+        font-weight: bold;
+        height: 80px;
+        width: 80px;
         margin: 0 20px 0 20px;
+        padding: 10px;
       }
 
       .item:hover, #targetObject:hover, a:hover {
@@ -470,6 +473,7 @@
             newEl.setAttribute('data-id', item);
             newEl.classList.add('item', this.items[item].bg);
             newEl.addEventListener('click', this.click);
+            newEl.textContent = `${this.items[item].interval}`;
             this.itemsEl.append(newEl);
           }
         }
