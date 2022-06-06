@@ -184,85 +184,106 @@
         white: 'bg-white'
       };
 
-      let config = {
-        logger: {
-          elements: {
-            text: 'logText',
-            clear: 'logClear'
-          }
-        },
-        target: {
-          width: 25,
-          height: 25,
-          scoreValue: 1,
-          elements: {
-            target: document.getElementById('targetObject'),
-            checkbox: document.getElementById('targetFormCheck')
-          }
-        },
-        score: {
-          session: 0,
-          high: 0,
-          length: 10,
-          multiplier: 1,
-          elements: {
-            session: document.getElementById('scoreSession'),
-            high: document.getElementById('scoreHigh'),
-            multiplier: document.getElementById('scoreMultiplier')
-          }
-        },
-        timer: {
-          seconds: 0,
-          interval: null,
-          active: false,
-          multiplier: 1,
-          elements: {
-            clock: document.getElementById('timerClock'),
-            start: document.getElementById('timerStart'),
-            stop: document.getElementById('timerStop'),
-            reset: document.getElementById('timerReset'),
-            multiplier: document.getElementById('timerMultiplier'),
-            decrease: document.getElementById('timerMultiplierDecrease'),
-            increase: document.getElementById('timerMultiplierIncrease')
-          }
-        },
-        item: {
-          items: [
-            {
-              name: 'red armor',
-              id: 'itemArmorRed',
-              interval: 25,
-              spawnTime: 0,
-              state: 0,
-              bg: bgColors.red
-            },
-            {
-              name: 'yellow armor',
-              id: 'itemArmorYellow',
-              interval: 25,
-              spawnTime: 0,
-              state: 0,
-              bg: bgColors.yellow
-            },
-            {
-              name: 'mega health',
-              id: 'itemHealthMega',
-              interval: 35,
-              spawnTime: 0,
-              state: 0,
-              bg: bgColors.blue
-            }
-          ]
+      class Config {
+        getConfig = (key) => {
+          return this.setConfig(config)[key];
         }
-      };
+
+        setConfig = (config) => {
+          return {
+            logger: {
+              elements: {
+                text: 'logText',
+                clear: 'logClear'
+              }
+            },
+            target: {
+              dimensions: {
+                width: 25,
+                height: 25
+              },
+              positions: {
+                left: 50,
+                top: 50
+              },
+              scoreValue: 1,
+              elements: {
+                target: document.getElementById('targetObject'),
+                checkbox: document.getElementById('targetFormCheck')
+              }
+            },
+            score: {
+              session: 0,
+              high: 0,
+              length: 10,
+              multiplier: 1,
+              elements: {
+                session: document.getElementById('scoreSession'),
+                high: document.getElementById('scoreHigh'),
+                multiplier: document.getElementById('scoreMultiplier')
+              }
+            },
+            timer: {
+              seconds: 0,
+              interval: null,
+              active: false,
+              multiplier: 1,
+              elements: {
+                clock: document.getElementById('timerClock'),
+                start: document.getElementById('timerStart'),
+                stop: document.getElementById('timerStop'),
+                reset: document.getElementById('timerReset'),
+                multiplier: document.getElementById('timerMultiplier'),
+                decrease: document.getElementById('timerMultiplierDecrease'),
+                increase: document.getElementById('timerMultiplierIncrease')
+              }
+            },
+            item: {
+              items: [
+                {
+                  name: 'red armor',
+                  id: 'itemArmorRed',
+                  interval: 25,
+                  spawnTime: 0,
+                  state: 0,
+                  bg: bgColors.red
+                },
+                {
+                  name: 'yellow armor',
+                  id: 'itemArmorYellow',
+                  interval: 25,
+                  spawnTime: 0,
+                  state: 0,
+                  bg: bgColors.yellow
+                },
+                {
+                  name: 'mega health',
+                  id: 'itemHealthMega',
+                  interval: 35,
+                  spawnTime: 0,
+                  state: 0,
+                  bg: bgColors.blue
+                }
+              ]
+            }
+          }
+        }
+      }
+
+      let config = new Config({});
 
       class Logger {
         constructor() {
+          this.setConfig();
           // dom
-          this.textEl = document.getElementById(config.logger.elements.text);
-          this.clearEl = document.getElementById(config.logger.elements.clear);
+          this.textEl = document.getElementById(this.config.elements.text);
+          this.clearEl = document.getElementById(this.config.elements.clear);
           // listeners
           this.clearEl.addEventListener('click', this.clear);
+        }
+
+        setConfig = () => {
+          this.config = config.getConfig('logger');
         }
 
         write = (content, color) => {
@@ -282,19 +303,34 @@
         }
       }
 
-      let logger = new Logger(config);
+      let logger = new Logger();
 
       class Score {
         constructor() {
-          // defaults
-          this.session = config.score.session;
-          this.high = config.score.high;
-          this.length = config.score.length;
-          this.multiplier = config.score.multiplier;
-          // dom
-          this.sessionEl = config.score.elements.session;
-          this.highEl = config.score.elements.high;
-          this.multiplierEl = config.score.elements.multiplier;
+          this.init();
+        }
+
+        init = () => {
+          this.setConfig();
+          this.setVars();
+          this.setDOM();
+        }
+
+        setConfig = () => {
+          this.config = config.getConfig('score');
+        }
+
+        setVars = () => {
+          this.session = this.config.session;
+          this.high = this.config.high;
+          this.length = this.config.length;
+          this.multiplier = this.config.multiplier;
+        }
+
+        setDOM = () => {
+          this.sessionEl = this.config.elements.session;
+          this.highEl = this.config.elements.high;
+          this.multiplierEl = this.config.elements.multiplier;
         }
 
         add = (value) => {
@@ -307,48 +343,72 @@
         }
 
         reset = () => {
-          this.session = config.score.session;
-          this.multiplier = config.score.multiplier;
+          this.init();
+          this.session = this.config.session;
+          this.multiplier = this.config.multiplier;
           this.sessionEl.textContent = `score: ${pad(0, this.length)}`;
         }
       }
 
-      let score = new Score(config);
+      let score = new Score();
 
       class Target {
         constructor() {
-          // defaults
-          this.width = config.target.width;
-          this.height = config.target.height;
-          this.scoreValue = config.target.scoreValue;
-          // dom
-          this.targetEl = config.target.elements.target;
-          this.targetEl.style.width = `${this.width}px`;
-          this.targetEl.style.height = `${this.height}px`;
-          this.checkboxEl = config.target.elements.checkbox;
+          this.init();
+        }
+
+        init = () => {
+          this.setConfig();
+          this.setVars();
+          this.setDOM();
+          this.setListeners();
+        }
+
+        setConfig = () => {
+          this.config = config.getConfig('target')
+        }
+
+        setDOM = () => {
+          this.targetEl = this.config.elements.target;
+          this.resetTarget();
+          this.checkboxEl = this.config.elements.checkbox;
           this.checkboxEl.checked = true;
-          // listeners
+        }
+
+        setVars = () => {
+          this.width = this.config.dimensions.width;
+          this.height = this.config.dimensions.height;
+          this.left = this.config.positions.left;
+          this.top = this.config.positions.top;
+          this.scoreValue = this.config.scoreValue;
+        }
+
+        setListeners = () => {
           this.targetEl.addEventListener('click', this.click);
           this.checkboxEl.addEventListener('click', this.toggle);
-          // default state
-          this.reset();
         }
 
         reset = () => {
-          this.setPosition(50, 50);
+          this.init()
         }
 
-        setPosition = (left, top) => {
+        setTargetPosition = (left, top) => {
           this.targetEl.style.left = `${left}px`;
           this.targetEl.style.top = `${top}px`;
         }
 
+        resetTarget = () => {
+          this.targetEl.style.width = `${this.config.dimensions.width}px`;
+          this.targetEl.style.height = `${this.config.dimensions.height}px`;
+          this.setTargetPosition(this.config.positions.left, this.config.positions.top);
+        }
+
         setRandomPosition = () => {
-          const maxPositionLeft = window.innerWidth - this.width - 50;
-          const maxPositionTop = window.innerHeight - this.height - 50;
-          const positionLeft = Math.floor((Math.random() * maxPositionLeft) + 50);
-          const positionTop = Math.floor((Math.random() * maxPositionTop) + 50);
-          this.setPosition(positionLeft, positionTop);
+          const maxLeft = window.innerWidth - this.width - 50;
+          const maxTop = window.innerHeight - this.height - 50;
+          const left = Math.floor((Math.random() * maxLeft) + 50);
+          const top = Math.floor((Math.random() * maxTop) + 50);
+          this.setTargetPosition(left, top);
         }
 
         click = (event) => {
@@ -368,29 +428,34 @@
         }
       }
 
-      let target = new Target(config);
+      let target = new Target();
 
       class Timer {
-        constructor() {
+        constructor(config) {
+          this.setConfig();
           // defaults
-          this.seconds = config.timer.seconds;
-          this.interval = config.timer.interval;
-          this.active = config.timer.active;
-          this.multiplier = config.timer.multiplier;
+          this.seconds = this.config.seconds;
+          this.interval = this.config.interval;
+          this.active = this.config.active;
+          this.multiplier = this.config.multiplier;
           // dom
-          this.clockEl = config.timer.elements.clock;
-          this.startEl = config.timer.elements.start;
-          this.stopEl = config.timer.elements.stop;
-          this.resetEl = config.timer.elements.reset;
-          this.decreaseEl = config.timer.elements.decrease;
-          this.increaseEl = config.timer.elements.increase;
-          this.multiplierEl = config.timer.elements.multiplier;
+          this.clockEl = this.config.elements.clock;
+          this.startEl = this.config.elements.start;
+          this.stopEl = this.config.elements.stop;
+          this.resetEl = this.config.elements.reset;
+          this.decreaseEl = this.config.elements.decrease;
+          this.increaseEl = this.config.elements.increase;
+          this.multiplierEl = this.config.elements.multiplier;
           // listeners
           this.startEl.addEventListener('click', this.start);
           this.stopEl.addEventListener('click', this.stop);
           this.resetEl.addEventListener('click', this.reset);
           this.decreaseEl.addEventListener('click', this.decreaseMultiplier);
           this.increaseEl.addEventListener('click', this.increaseMultiplier);
+        }
+
+        setConfig = () => {
+          this.config = config.getConfig('timer')
         }
 
         time = () => {
@@ -422,9 +487,9 @@
           if (this.active) {
             this.stop();
           }
-          this.seconds = 0;
+          this.seconds = this.config.seconds;
           this.clockEl.textContent = this.time();
-          this.multiplier = config.timer.multiplier;
+          this.multiplier = this.config.multiplier;
           this.setMultiplierText();
           score.reset();
           target.reset();
@@ -465,15 +530,24 @@
         }
       }
 
-      let timer = new Timer(config);
+      let timer = new Timer();
 
       class Item {
         constructor() {
+          this.setConfig();
           // defaults
-          this.items = config.item.items;
+          this.items = this.config.items;
           // dom
           this.itemsEl = document.getElementById('items');
-          // item divs & listeners
+          this.createItems();
+        }
+
+        setConfig = () => {
+          this.config = config.getConfig('item');
+        }
+
+        createItems = () => {
+          this.itemsEl.innerHTML = '';
           for (let item in this.items) {
             let newEl = document.createElement('div');
             newEl.setAttribute('id', this.items[item].id);
@@ -500,11 +574,13 @@
         }
 
         reset = () => {
-          this.items = config.item.items;
+          this.setConfig();
+          this.items = this.config.items
+          this.createItems();
         }
       }
 
-      let item = new Item(config);
+      let item = new Item();
     </script>
 
   </body>
