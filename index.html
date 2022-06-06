@@ -18,7 +18,7 @@
       }
 
       a {
-        color: #4d7175;
+        color: #5a70a0;
         text-decoration: none;
       }
 
@@ -98,10 +98,13 @@
         color: #c95b51;
       }
       .fg-blue {
-        color: #4d7175;
+        color: #5a70a0;
       }
       .fg-white {
         color: #fff7eb;
+      }
+      .fg-grey {
+        color: #808080;
       }
 
       .bg-yellow {
@@ -114,10 +117,13 @@
         background-color: #c95b51;
       }
       .bg-blue {
-        background-color: #4d7175;
+        background-color: #5a70a0;
       }
       .bg-white {
         background-color: #fff7eb;
+      }
+      .bg-grey {
+        background-color: #808080;
       }
 
     </style>
@@ -173,7 +179,8 @@
         green: 'fg-green',
         red: 'fg-red',
         blue: 'fg-blue',
-        white: 'fg-white'
+        white: 'fg-white',
+        grey: 'fg-grey'
       };
 
       const bgColors = {
@@ -181,7 +188,8 @@
         green: 'bg-green',
         red: 'bg-red',
         blue: 'bg-blue',
-        white: 'bg-white'
+        white: 'bg-white',
+        grey: 'bg-grey'
       };
 
       class Config {
@@ -246,7 +254,8 @@
                   interval: 25,
                   spawnTime: 0,
                   state: 0,
-                  bg: bgColors.red
+                  bg: 'red',
+                  fg: 'red'
                 },
                 {
                   name: 'yellow armor',
@@ -254,7 +263,8 @@
                   interval: 25,
                   spawnTime: 0,
                   state: 0,
-                  bg: bgColors.yellow
+                  bg: 'yellow',
+                  fg: 'yellow'
                 },
                 {
                   name: 'mega health',
@@ -262,7 +272,8 @@
                   interval: 35,
                   spawnTime: 0,
                   state: 0,
-                  bg: bgColors.blue
+                  bg: 'blue',
+                  fg: 'blue'
                 }
               ]
             }
@@ -308,6 +319,9 @@
       class Score {
         constructor() {
           this.init();
+          // outside of init to preserve high score
+          this.high = this.config.high;
+          this.highEl.textContent = `${pad(this.config.high, this.length)}`;
         }
 
         init = () => {
@@ -322,31 +336,28 @@
 
         setVars = () => {
           this.session = this.config.session;
-          this.high = this.config.high;
           this.length = this.config.length;
           this.multiplier = this.config.multiplier;
         }
 
         setDOM = () => {
           this.sessionEl = this.config.elements.session;
+          this.sessionEl.textContent = `${pad(this.config.session, this.length)}`;
           this.highEl = this.config.elements.high;
           this.multiplierEl = this.config.elements.multiplier;
         }
 
         add = (value) => {
           this.session = this.session + Math.floor(value * timer.multiplier);
-          this.sessionEl.textContent = `score: ${pad(this.session, this.length)}`;
+          this.sessionEl.textContent = `${pad(this.session, this.length)}`;
           if (this.session > this.high) {
             this.high = this.session;
-            this.highEl.textContent = `high score: ${pad(this.session, this.length)}`;
+            this.highEl.textContent = `${pad(this.session, this.length)}`;
           }
         }
 
         reset = () => {
-          this.init();
-          this.session = this.config.session;
-          this.multiplier = this.config.multiplier;
-          this.sessionEl.textContent = `score: ${pad(0, this.length)}`;
+          
         }
       }
 
@@ -372,7 +383,7 @@
           this.targetEl = this.config.elements.target;
           this.resetTarget();
           this.checkboxEl = this.config.elements.checkbox;
-          this.checkboxEl.checked = true;
+          this.setTargetVisibility();
         }
 
         setVars = () => {
@@ -385,7 +396,7 @@
 
         setListeners = () => {
           this.targetEl.addEventListener('click', this.click);
-          this.checkboxEl.addEventListener('click', this.toggle);
+          this.checkboxEl.addEventListener('click', this.setTargetVisibility);
         }
 
         reset = () => {
@@ -419,12 +430,8 @@
           }
         }
 
-        toggle = () => {
-          if (this.checkboxEl.checked == true) {
-            this.targetEl.style.visibility = 'visible';
-          } else {
-            this.targetEl.style.visibility = 'hidden';
-          }
+        setTargetVisibility = () => {
+          this.targetEl.style.visibility = this.checkboxEl.checked ?'visible' : 'hidden';
         }
       }
 
@@ -432,30 +439,45 @@
 
       class Timer {
         constructor(config) {
+          this.init();
+        }
+
+        init = () => {
           this.setConfig();
-          // defaults
+          this.setVars();
+          this.setDOM();
+          this.setListeners();
+        }
+
+        setConfig = () => {
+          this.config = config.getConfig('timer')
+        }
+
+        setVars = () => {
           this.seconds = this.config.seconds;
           this.interval = this.config.interval;
           this.active = this.config.active;
           this.multiplier = this.config.multiplier;
-          // dom
+        }
+
+        setDOM = () => {
           this.clockEl = this.config.elements.clock;
+          this.clockEl.textContent = this.time();
           this.startEl = this.config.elements.start;
           this.stopEl = this.config.elements.stop;
           this.resetEl = this.config.elements.reset;
           this.decreaseEl = this.config.elements.decrease;
           this.increaseEl = this.config.elements.increase;
           this.multiplierEl = this.config.elements.multiplier;
-          // listeners
+          this.setMultiplierText();
+        }
+
+        setListeners = () => {
           this.startEl.addEventListener('click', this.start);
           this.stopEl.addEventListener('click', this.stop);
           this.resetEl.addEventListener('click', this.reset);
           this.decreaseEl.addEventListener('click', this.decreaseMultiplier);
           this.increaseEl.addEventListener('click', this.increaseMultiplier);
-        }
-
-        setConfig = () => {
-          this.config = config.getConfig('timer')
         }
 
         time = () => {
@@ -464,7 +486,7 @@
 
         start = () => {
           if (!this.active) {
-            logger.write('timer started', 'green');
+            logger.write('timer started', 'white');
             this.interval = setInterval(this.set, (1000 / this.multiplier));
             this.active = true;
           }
@@ -472,7 +494,7 @@
 
         stop = () => {
           if (this.active) {
-            logger.write('timer stopped', 'red');
+            logger.write('timer stopped', 'white');
             clearInterval(this.interval);
             this.active = false;
           }
@@ -487,13 +509,10 @@
           if (this.active) {
             this.stop();
           }
-          this.seconds = this.config.seconds;
-          this.clockEl.textContent = this.time();
-          this.multiplier = this.config.multiplier;
-          this.setMultiplierText();
-          score.reset();
-          target.reset();
-          item.reset();
+          this.init()
+          score.init();
+          target.resetTarget();
+          item.init();
           logger.write('timer and score reset to default values', 'white');
         }
 
@@ -534,16 +553,27 @@
 
       class Item {
         constructor() {
+          this.init();
+        }
+
+        init = () => {
           this.setConfig();
-          // defaults
-          this.items = this.config.items;
-          // dom
-          this.itemsEl = document.getElementById('items');
+          this.setVars();
+          this.setDOM();
           this.createItems();
         }
 
         setConfig = () => {
           this.config = config.getConfig('item');
+        }
+
+        setVars = () => {
+          this.items = this.config.items;
+        }
+
+        setDOM = () => {
+          this.itemsEl = document.getElementById('items');
+          this.createItems();
         }
 
         createItems = () => {
@@ -552,7 +582,7 @@
             let newEl = document.createElement('div');
             newEl.setAttribute('id', this.items[item].id);
             newEl.setAttribute('data-id', item);
-            newEl.classList.add('item', this.items[item].bg);
+            newEl.classList.add('item', bgColors[this.items[item].bg]);
             newEl.addEventListener('click', this.click);
             newEl.textContent = `${this.items[item].interval}`;
             this.itemsEl.append(newEl);
@@ -566,17 +596,15 @@
             if (difference >= 0) {
               _item.spawnTime = timer.seconds + _item.interval;
               score.add(_item.interval);
-              logger.write(`${_item.name} pickup ${difference} seconds after spawn`, 'green');
+              logger.write(`${_item.name} pickup ${difference} seconds after spawn`, _item.fg);
             } else {
-              logger.write(`${_item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, 'red');
+              logger.write(`${_item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, 'grey');
             }
           }
         }
 
         reset = () => {
-          this.setConfig();
-          this.items = this.config.items
-          this.createItems();
+          this.init();
         }
       }
 
