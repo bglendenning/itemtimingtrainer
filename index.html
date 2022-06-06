@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang='en'>
+
+  <head>
+    <meta charset='utf-8'>
+    <title>Item Timing Trainer</title>
+
+    <style>
+      body {
+        background-color: #010101;
+        color: #fff7eb;
+        font-family: sans-serif;
+      }
+
+      body a {
+        color: #4d7175;
+        text-decoration: none;
+      }
+
+      body a:hover {
+        color: #6f9397;
+      }
+
+      .item {
+        cursor: pointer;
+        height: 100px;
+        width: 100px;
+        margin: 0 20px 0 20px;
+      }
+
+      .item:hover, #targetObject:hover {
+        opacity: 0.8;
+      }
+
+      #log {
+        border-left: 1px #fff7eb dotted;
+        margin: 40px auto 0 auto;
+        padding-left: 20px;
+        width: 600px;
+      }
+
+      #log h1 {
+        font-size: 1em;
+      }
+
+      #logClear {
+        margin-top: 20px;
+      }
+
+      #logScoreHigh {
+        float: left;
+      }
+
+      #logScoreSession {
+        text-align: right;
+      }
+
+      #logText {
+        height: 300px;
+        margin: 20px auto 0 auto;
+        overflow: auto;
+      }
+
+      #target {
+        margin-top: 20px;
+        text-align: center;
+      }
+
+      #targetObject {
+        background-color: #5f8258;
+        height: 25px;
+        cursor: pointer;
+        position: absolute;
+        width: 25px;
+      }
+
+      #timer div {
+        font-size: 50px;
+        padding: 0 5px 0 5px;
+      }
+
+      #items {
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+      }
+
+      #timerDisplay, #timerAdmin {
+        text-align: center;
+      }
+
+      .clear {
+        clear: both;
+      }
+
+      .fg-yellow {
+        color: #f5bc6c;
+      }
+      .fg-green {
+        color: #5f8258;
+      }
+      .fg-red {
+        color: #c95b51;
+      }
+      .fg-blue {
+        color: #4d7175;
+      }
+      .fg-white {
+        color: #fff7eb;
+      }
+
+      .bg-yellow {
+        background-color: #f5bc6c;
+      }
+      .bg-green {
+        background-color: #5f8258;
+      }
+      .bg-red {
+        background-color: #c95b51;
+      }
+      .bg-blue {
+        background-color: #4d7175;
+      }
+      .bg-white {
+        background-color: #fff7eb;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+    <div id='targetObject'></div>
+    <div id='timer'>
+      <div id='timerAdmin'>
+        <span id='timerStart'><a href='#'>start</a></span>
+        <span id='timerStop'><a href='#'>stop</a></span>
+        <span id='timerReset'><a href='#'>reset</a></span>
+        <span id='timerMultiplierDecrease'><a href='#' title='decrease timer rate'>-</a></span>
+        <span id='timerMultiplierIncrease'><a href='#' title='increase timer rate'>+</a></span>
+      </div>
+      <div class='clear'></div>
+      <div id='timerDisplay'>
+        <span id='timerClock'>00:00</span>
+        <span id='timerMultiplier'>1x</span>
+      </div>
+    </div>
+    <div id='items'></div>
+    <div class='clear'></div>
+    <div id='target'>
+      <div id='targetForm'>
+        <form>
+          <label><input type='checkbox' id='targetFormCheck'> Enable randomized target.</label>
+        </form>
+      </div>
+    </div>
+    <div id='log'>
+      <div id='scoreHigh'>high score: 0000000000</div>
+      <div id='scoreSession'>score: 0000000000</div>
+      <div id='logText'>
+        <h1>Instructions</h1>
+        <p>Click the large colored squares to simulate picking up items. Each item pick up is worth its respawn time in points multiplied by the current time speed multiplier value.</p>
+        <p>Click the green square to earn points while waiting for items to respawn. each green square clicked is worth 1 point multiplied by the current time speed multiplier value.</p>
+        <h1>controls</h1>
+        <ul>
+          <li><b>start</b>: starts the timer</li>
+          <li><b>stop</b>: stops the timer</li>
+          <li><b>reset</b>: resets the timer and the current session score to 0</li>
+          <li><b>-/+</b>: decrease or increase the rate at which the timer counts up</li>
+          <li><b>enable randomized target</b>: show or hide green target square</li>
+        </ul>
+      </div>
+      <div>
+        <a id='logClear' href='#'>clear log</a>
+      </div>
+    </div>
+
+    <script type='text/javascript'>
+      function pad(value, length) {
+          let valueString = value.toString();
+          while (valueString.length < length) {
+              valueString = "0" + valueString;
+          }
+          return valueString;
+      }
+
+      const fgColors = {
+        yellow: 'fg-yellow',
+        green: 'fg-green',
+        red: 'fg-red',
+        blue: 'fg-blue',
+        white: 'fg-white'
+      };
+
+      const bgColors = {
+        yellow: 'bg-yellow',
+        green: 'bg-green',
+        red: 'bg-red',
+        blue: 'bg-blue',
+        white: 'bg-white'
+      };
+
+      const config = {
+        logger: {
+          elements: {
+            text: 'logText',
+            clear: 'logClear'
+          }
+        },
+        target: {
+          width: 25,
+          height: 25,
+          scoreValue: 1,
+          elements: {
+            target: document.getElementById('targetObject'),
+            checkbox: document.getElementById('targetFormCheck')
+          }
+        },
+        score: {
+          session: 0,
+          high: 0,
+          length: 10,
+          multiplier: 1,
+          elements: {
+            session: document.getElementById('scoreSession'),
+            high: document.getElementById('scoreHigh'),
+            multiplier: document.getElementById('scoreMultiplier')
+          }
+        },
+        timer: {
+          seconds: 0,
+          interval: null,
+          active: false,
+          multiplier: 1,
+          elements: {
+            clock: document.getElementById('timerClock'),
+            start: document.getElementById('timerStart'),
+            stop: document.getElementById('timerStop'),
+            reset: document.getElementById('timerReset'),
+            multiplier: document.getElementById('timerMultiplier'),
+            decrease: document.getElementById('timerMultiplierDecrease'),
+            increase: document.getElementById('timerMultiplierIncrease')
+          }
+        },
+        item: {
+          items: [
+            {
+              name: 'red armor',
+              id: 'itemArmorRed',
+              interval: 25,
+              spawnTime: 0,
+              state: 0,
+              bg: bgColors.red
+            },
+            {
+              name: 'yellow armor',
+              id: 'itemArmorYellow',
+              interval: 25,
+              spawnTime: 0,
+              state: 0,
+              bg: bgColors.yellow
+            },
+            {
+              name: 'mega health',
+              id: 'itemHealthMega',
+              interval: 35,
+              spawnTime: 0,
+              state: 0,
+              bg: bgColors.blue
+            }
+          ]
+        }
+      };
+
+      let time = 0;
+
+      class Logger {
+        constructor() {
+          // dom
+          this.textEl = document.getElementById(config.logger.elements.text);
+          this.clearEl = document.getElementById(config.logger.elements.clear);
+          // listeners
+          this.clearEl.addEventListener('click', this.clear);
+        }
+
+        write = (content, color) => {
+          const newLog = this.createLog(content, color);
+          this.textEl.prepend(newLog);
+        }
+
+        clear = () => {
+          this.textEl.textContent = '';
+        }
+
+        createLog = (content, color) => {
+          let newEl = document.createElement('p');
+          newEl.textContent = `${timer.time()} - ${content}`;
+          newEl.classList.add(fgColors[color]);
+          return newEl;
+        }
+      }
+
+      let logger = new Logger(config);
+
+      class Score {
+        constructor() {
+          // defaults
+          this.session = config.score.session;
+          this.high = config.score.high;
+          this.length = config.score.length;
+          this.multiplier = config.score.multiplier;
+          // dom
+          this.sessionEl = config.score.elements.session;
+          this.highEl = config.score.elements.high;
+          this.multiplierEl = config.score.elements.multiplier;
+        }
+
+        add = (value) => {
+          this.session = this.session + Math.floor(value * timer.multiplier);
+          this.sessionEl.textContent = `score: ${pad(this.session, this.length)}`;
+          if (this.session > this.high) {
+            this.high = this.session;
+            this.highEl.textContent = `high score: ${pad(this.session, this.length)}`;
+          }
+        }
+
+        reset = () => {
+          this.session = config.score.session;
+          this.multiplier = config.score.multiplier;
+          this.sessionEl.textContent = `score: ${pad(0, this.length)}`;
+        }
+      }
+
+      let score = new Score(config);
+
+      class Target {
+        constructor() {
+          // defaults
+          this.width = config.target.width;
+          this.height = config.target.height;
+          this.scoreValue = config.target.scoreValue;
+          // dom
+          this.targetEl = config.target.elements.target;
+          this.checkboxEl = config.target.elements.checkbox;
+          this.checkboxEl.checked = true;
+          // listeners
+          this.targetEl.addEventListener('click', this.click);
+          this.checkboxEl.addEventListener('click', this.toggle);
+          // set default state
+          this.reset();
+        }
+
+        reset = () => {
+          this.setPosition(50, 50);
+        }
+
+        setPosition = (left, top) => {
+          this.targetEl.style.left = `${left}px`;
+          this.targetEl.style.top = `${top}px`;
+        }
+
+        setRandomPosition = () => {
+          const maxPositionLeft = window.innerWidth - this.width - 50;
+          const maxPositionTop = window.innerHeight - this.height - 50;
+          const positionLeft = Math.floor((Math.random() * maxPositionLeft) + 50);
+          const positionTop = Math.floor((Math.random() * maxPositionTop) + 50);
+          this.setPosition(positionLeft, positionTop);
+        }
+
+        click = (event) => {
+          if (timer.active && this.checkboxEl.checked) {
+            this.setRandomPosition();
+            score.add(this.scoreValue);
+          }
+        }
+
+        toggle = (event) => {
+          if (this.checkboxEl.checked == true) {
+            this.targetEl.style.visibility = 'visible';
+          } else {
+            this.targetEl.style.visibility = 'hidden';
+          }
+        }
+      }
+
+      let target = new Target(config);
+
+      class Timer {
+        constructor() {
+          // defaults
+          this.seconds = config.timer.seconds;
+          this.interval = config.timer.interval;
+          this.active = config.timer.active;
+          this.multiplier = config.timer.multiplier;
+          // dom
+          this.clockEl = config.timer.elements.clock;
+          this.startEl = config.timer.elements.start;
+          this.stopEl = config.timer.elements.stop;
+          this.resetEl = config.timer.elements.reset;
+          this.decreaseEl = config.timer.elements.decrease;
+          this.increaseEl = config.timer.elements.increase;
+          this.multiplierEl = config.timer.elements.multiplier;
+          // listeners
+          this.startEl.addEventListener('click', this.start);
+          this.stopEl.addEventListener('click', this.stop);
+          this.resetEl.addEventListener('click', this.reset);
+          this.decreaseEl.addEventListener('click', this.decreaseMultiplier);
+          this.increaseEl.addEventListener('click', this.increaseMultiplier);
+        }
+
+        time = () => {
+          return `${pad(parseInt(this.seconds / 60), 2)}:${pad(this.seconds % 60, 2)}`;
+        }
+
+        start = (event) => {
+          if (!this.active) {
+            logger.write('timer started', 'green');
+            this.interval = setInterval(this.set, (1000 / this.multiplier));
+            this.active = true;
+          }
+        }
+
+        stop = (event) => {
+          if (this.active) {
+            logger.write('timer stopped', 'red');
+            clearInterval(this.interval);
+            this.active = false;
+          }
+        }
+
+        set = () => {
+          ++this.seconds;
+          this.clockEl.textContent = this.time();
+        }
+
+        reset = () => {
+          if (this.active) {
+            this.stop();
+          }
+          this.seconds = 0;
+          this.clockEl.textContent = this.time();
+          this.multiplier = config.timer.multiplier;
+          this.setMultiplierText();
+          score.reset();
+          target.reset();
+          item.reset();
+          logger.write('timer and score reset to default values', 'white');
+        }
+
+        setMultiplierText = () => {
+          this.multiplierEl.textContent = `${this.multiplier}x`;
+        }
+
+        increaseMultiplier = () => {
+          if (this.multiplier >= 1) {
+            ++this.multiplier;
+          } else if (this.multiplier > 0) {
+            this.multiplier = this.multiplier + .25;
+          }
+          if (this.active) {
+            clearInterval(this.interval);
+            this.interval = setInterval(this.set, (1000 / this.multiplier));
+          }
+          this.setMultiplierText();
+          logger.write(`timer multiplier set to ${this.multiplier}x`, 'white');
+        }
+
+        decreaseMultiplier = () => {
+          if (this.multiplier > 1) {
+            --this.multiplier;
+          } else if (this.multiplier > .25) {
+            this.multiplier = this.multiplier - .25;
+          }
+          if (this.active) {
+            clearInterval(this.interval);
+            this.interval = setInterval(this.set, (1000 / this.multiplier));
+          }
+          this.setMultiplierText();
+          logger.write(`timer multiplier set to ${this.multiplier}x`, 'white');
+        }
+      }
+
+      let timer = new Timer(config);
+
+      class Item {
+        constructor() {
+          // defaults
+          this.items = config.item.items;
+          // dom
+          this.itemsEl = document.getElementById('items');
+          // create item divs & listeners
+          for (let item in this.items) {
+            let newEl = document.createElement('div');
+            newEl.setAttribute('id', this.items[item].id);
+            newEl.setAttribute('data-id', item);
+            newEl.classList.add('item', this.items[item].bg);
+            newEl.addEventListener('click', this.click);
+            this.itemsEl.append(newEl);
+          }
+        }
+
+        click = (event) => {
+          item = this.items[event.target.getAttribute('data-id')];
+          let difference = timer.seconds - item.spawnTime;
+          if (timer.active) {
+            if (difference >= 0) {
+              item.spawnTime = timer.seconds + item.interval;
+              score.add(item.interval);
+              logger.write(`${item.name} pickup ${difference} seconds after spawn`, 'green');
+            } else {
+              logger.write(`${item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, 'red');
+            }
+          }
+        }
+
+        reset = () => {
+          this.items = config.item.items;
+        }
+      }
+
+      let item = new Item(config);
+    </script>
+
+  </body>
+
+</html>
