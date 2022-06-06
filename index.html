@@ -475,15 +475,15 @@
         }
 
         click = (event) => {
-          item = this.items[event.target.getAttribute('data-id')];
-          let difference = timer.seconds - item.spawnTime;
+          let _item = this.items[event.target.getAttribute('data-id')];
+          let difference = timer.seconds - _item.spawnTime;
           if (timer.active) {
             if (difference >= 0) {
-              item.spawnTime = timer.seconds + item.interval;
-              score.add(item.interval);
-              logger.write(`${item.name} pickup ${difference} seconds after spawn`, 'green');
+              _item.spawnTime = timer.seconds + _item.interval;
+              score.add(_item.interval);
+              logger.write(`${_item.name} pickup ${difference} seconds after spawn`, 'green');
             } else {
-              logger.write(`${item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, 'red');
+              logger.write(`${_item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, 'red');
             }
           }
         }
