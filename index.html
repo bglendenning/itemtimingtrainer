@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang='en'>
 
+<html lang="en">
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta name="author" content="Brandan Glendenning">
     <meta name="description" content="Arena shooter item timing trainer.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -131,41 +131,41 @@
   </head>
 
   <body>
-    <div id='targetObject'></div>
-    <div id='timer'>
-      <div id='timerAdmin'>
-        <a href='javascript:void(0)' id='timerStart'>start</a>
-        <a href='javascript:void(0)' id='timerStop'>stop</a>
-        <a href='javascript:void(0)' id='timerReset'>reset</a>
-        <a href='javascript:void(0)' id='timerMultiplierDecrease'>-</a>
-        <a href='javascript:void(0)' id='timerMultiplierIncrease'>+</a>
+    <div id="targetObject"></div>
+    <div id="timer">
+      <div id="timerAdmin">
+        <a href="javascript:void(0)" id="timerStart">start</a>
+        <a href="javascript:void(0)" id="timerStop">stop</a>
+        <a href="javascript:void(0)" id="timerReset">reset</a>
+        <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
+        <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
       </div>
-      <div class='clear'></div>
-      <div id='timerDisplay'>
-        <span id='timerClock'>00:00</span>
-        <span id='timerMultiplier'>1x</span>
+      <div class="clear"></div>
+      <div id="timerDisplay">
+        <span id="timerClock">00:00</span>
+        <span id="timerMultiplier">1x</span>
       </div>
     </div>
-    <div id='items'></div>
-    <div class='clear'></div>
-    <div id='targetToggle'>
-      <label><input type='checkbox' id='targetFormCheck'> Enable randomized target.</label>
+    <div id="items"></div>
+    <div class="clear"></div>
+    <div id="targetToggle">
+      <label><input type="checkbox" id="targetFormCheck"> Enable randomized target.</label>
     </div>
-    <div id='log'>
-      <div id='scoreHigh'>high score: 0000000000</div>
-      <div id='scoreSession'>score: 0000000000</div>
-      <div id='logText'>
+    <div id="log">
+      <div id="scoreHigh">high score: 0000000000</div>
+      <div id="scoreSession">score: 0000000000</div>
+      <div id="logText">
         <h1>Instructions</h1>
         <p>Use start, stop, and reset to start, stop, and reset the trainer. Use - and + to manipulate the time speed multiplier.</p>
         <p>Click the large colored squares to simulate picking up items. Each item pick up is worth its respawn time in points multiplied by the current time speed multiplier value.</p>
         <p>Click the small green square to earn points while waiting for items to respawn. Each green square clicked is worth 1 point multiplied by the current time speed multiplier value.</p>
       </div>
       <div>
-        <a id='logClear' href='javascript:void(0)'>clear log</a>
+        <a id="logClear" href="javascript:void(0)">clear log</a>
       </div>
     </div>
 
-    <script type='text/javascript'>
+    <script type="text/javascript">
       function pad(value, length) {
           let valueString = value.toString();
           while (valueString.length < length) {
@@ -175,21 +175,21 @@
       }
 
       const fgColors = {
-        yellow: 'fg-yellow',
-        green: 'fg-green',
-        red: 'fg-red',
-        blue: 'fg-blue',
-        white: 'fg-white',
-        grey: 'fg-grey'
+        yellow: "fg-yellow",
+        green: "fg-green",
+        red: "fg-red",
+        blue: "fg-blue",
+        white: "fg-white",
+        grey: "fg-grey"
       };
 
       const bgColors = {
-        yellow: 'bg-yellow',
-        green: 'bg-green',
-        red: 'bg-red',
-        blue: 'bg-blue',
-        white: 'bg-white',
-        grey: 'bg-grey'
+        yellow: "bg-yellow",
+        green: "bg-green",
+        red: "bg-red",
+        blue: "bg-blue",
+        white: "bg-white",
+        grey: "bg-grey"
       };
 
       class Config {
@@ -201,8 +201,8 @@
           return {
             logger: {
               elements: {
-                text: 'logText',
-                clear: 'logClear'
+                text: "logText",
+                clear: "logClear"
               }
             },
             target: {
@@ -216,8 +216,8 @@
               },
               scoreValue: 1,
               elements: {
-                target: document.getElementById('targetObject'),
-                checkbox: document.getElementById('targetFormCheck')
+                target: document.getElementById("targetObject"),
+                checkbox: document.getElementById("targetFormCheck")
               }
             },
             score: {
@@ -226,9 +226,9 @@
               length: 10,
               multiplier: 1,
               elements: {
-                session: document.getElementById('scoreSession'),
-                high: document.getElementById('scoreHigh'),
-                multiplier: document.getElementById('scoreMultiplier')
+                session: document.getElementById("scoreSession"),
+                high: document.getElementById("scoreHigh"),
+                multiplier: document.getElementById("scoreMultiplier")
               }
             },
             timer: {
@@ -237,43 +237,40 @@
               active: false,
               multiplier: 1,
               elements: {
-                clock: document.getElementById('timerClock'),
-                start: document.getElementById('timerStart'),
-                stop: document.getElementById('timerStop'),
-                reset: document.getElementById('timerReset'),
-                multiplier: document.getElementById('timerMultiplier'),
-                decrease: document.getElementById('timerMultiplierDecrease'),
-                increase: document.getElementById('timerMultiplierIncrease')
+                clock: document.getElementById("timerClock"),
+                start: document.getElementById("timerStart"),
+                stop: document.getElementById("timerStop"),
+                reset: document.getElementById("timerReset"),
+                multiplier: document.getElementById("timerMultiplier"),
+                decrease: document.getElementById("timerMultiplierDecrease"),
+                increase: document.getElementById("timerMultiplierIncrease")
               }
             },
             item: {
               items: [
                 {
-                  name: 'red armor',
-                  id: 'itemArmorRed',
+                  name: "red armor",
+                  id: "itemArmorRed",
                   interval: 25,
                   spawnTime: 0,
-                  state: 0,
-                  bg: 'red',
-                  fg: 'red'
+                  bg: "red",
+                  fg: "red"
                 },
                 {
-                  name: 'yellow armor',
-                  id: 'itemArmorYellow',
+                  name: "yellow armor",
+                  id: "itemArmorYellow",
                   interval: 25,
                   spawnTime: 0,
-                  state: 0,
-                  bg: 'yellow',
-                  fg: 'yellow'
+                  bg: "yellow",
+                  fg: "yellow"
                 },
                 {
-                  name: 'mega health',
-                  id: 'itemHealthMega',
+                  name: "mega health",
+                  id: "itemHealthMega",
                   interval: 35,
                   spawnTime: 0,
-                  state: 0,
-                  bg: 'blue',
-                  fg: 'blue'
+                  bg: "blue",
+                  fg: "blue"
                 }
               ]
             }
@@ -290,11 +287,11 @@
           this.textEl = document.getElementById(this.config.elements.text);
           this.clearEl = document.getElementById(this.config.elements.clear);
           // listeners
-          this.clearEl.addEventListener('click', this.clear);
+          this.clearEl.addEventListener("click", this.clear);
         }
 
         setConfig = () => {
-          this.config = config.getConfig('logger');
+          this.config = config.getConfig("logger");
         }
 
         write = (content, color) => {
@@ -303,11 +300,11 @@
         }
 
         clear = () => {
-          this.textEl.textContent = '';
+          this.textEl.textContent = "";
         }
 
         createLog = (content, color) => {
-          let newEl = document.createElement('p');
+          let newEl = document.createElement("p");
           newEl.textContent = `${timer.time()} - ${content}`;
           newEl.classList.add(fgColors[color]);
           return newEl;
@@ -331,7 +328,7 @@
         }
 
         setConfig = () => {
-          this.config = config.getConfig('score');
+          this.config = config.getConfig("score");
         }
 
         setVars = () => {
@@ -376,7 +373,7 @@
         }
 
         setConfig = () => {
-          this.config = config.getConfig('target')
+          this.config = config.getConfig("target")
         }
 
         setDOM = () => {
@@ -395,8 +392,8 @@
         }
 
         setListeners = () => {
-          this.targetEl.addEventListener('click', this.click);
-          this.checkboxEl.addEventListener('click', this.setTargetVisibility);
+          this.targetEl.addEventListener("click", this.click);
+          this.checkboxEl.addEventListener("click", this.setTargetVisibility);
         }
 
         reset = () => {
@@ -431,7 +428,7 @@
         }
 
         setTargetVisibility = () => {
-          this.targetEl.style.visibility = this.checkboxEl.checked ?'visible' : 'hidden';
+          this.targetEl.style.visibility = this.checkboxEl.checked ?"visible" : "hidden";
         }
       }
 
@@ -450,7 +447,7 @@
         }
 
         setConfig = () => {
-          this.config = config.getConfig('timer')
+          this.config = config.getConfig("timer")
         }
 
         setVars = () => {
@@ -473,11 +470,11 @@
         }
 
         setListeners = () => {
-          this.startEl.addEventListener('click', this.start);
-          this.stopEl.addEventListener('click', this.stop);
-          this.resetEl.addEventListener('click', this.reset);
-          this.decreaseEl.addEventListener('click', this.decreaseMultiplier);
-          this.increaseEl.addEventListener('click', this.increaseMultiplier);
+          this.startEl.addEventListener("click", this.start);
+          this.stopEl.addEventListener("click", this.stop);
+          this.resetEl.addEventListener("click", this.reset);
+          this.decreaseEl.addEventListener("click", this.decreaseMultiplier);
+          this.increaseEl.addEventListener("click", this.increaseMultiplier);
         }
 
         time = () => {
@@ -486,7 +483,7 @@
 
         start = () => {
           if (!this.active) {
-            logger.write('timer started', 'white');
+            logger.write("timer started", "white");
             this.interval = setInterval(this.set, (1000 / this.multiplier));
             this.active = true;
           }
@@ -494,7 +491,7 @@
 
         stop = () => {
           if (this.active) {
-            logger.write('timer stopped', 'white');
+            logger.write("timer stopped", "white");
             clearInterval(this.interval);
             this.active = false;
           }
@@ -513,7 +510,7 @@
           score.init();
           target.resetTarget();
           item.init();
-          logger.write('timer and score reset to default values', 'white');
+          logger.write("timer and score reset to default values", "white");
         }
 
         setMultiplierText = () => {
@@ -531,7 +528,7 @@
             this.interval = setInterval(this.set, (1000 / this.multiplier));
           }
           this.setMultiplierText();
-          logger.write(`timer multiplier set to ${this.multiplier}x`, 'white');
+          logger.write(`timer multiplier set to ${this.multiplier}x`, "white");
         }
 
         decreaseMultiplier = () => {
@@ -545,7 +542,7 @@
             this.interval = setInterval(this.set, (1000 / this.multiplier));
           }
           this.setMultiplierText();
-          logger.write(`timer multiplier set to ${this.multiplier}x`, 'white');
+          logger.write(`timer multiplier set to ${this.multiplier}x`, "white");
         }
       }
 
@@ -564,7 +561,7 @@
         }
 
         setConfig = () => {
-          this.config = config.getConfig('item');
+          this.config = config.getConfig("item");
         }
 
         setVars = () => {
@@ -572,25 +569,25 @@
         }
 
         setDOM = () => {
-          this.itemsEl = document.getElementById('items');
+          this.itemsEl = document.getElementById("items");
           this.createItems();
         }
 
         createItems = () => {
-          this.itemsEl.innerHTML = '';
+          this.itemsEl.innerHTML = "";
           for (let item in this.items) {
-            let newEl = document.createElement('div');
-            newEl.setAttribute('id', this.items[item].id);
-            newEl.setAttribute('data-id', item);
-            newEl.classList.add('item', bgColors[this.items[item].bg]);
-            newEl.addEventListener('click', this.click);
+            let newEl = document.createElement("div");
+            newEl.setAttribute("id", this.items[item].id);
+            newEl.setAttribute("data-id", item);
+            newEl.classList.add("item", bgColors[this.items[item].bg]);
+            newEl.addEventListener("click", this.click);
             newEl.textContent = `${this.items[item].interval}`;
             this.itemsEl.append(newEl);
           }
         }
 
         click = (event) => {
-          let _item = this.items[event.target.getAttribute('data-id')];
+          let _item = this.items[event.target.getAttribute("data-id")];
           let difference = timer.seconds - _item.spawnTime;
           if (timer.active) {
             if (difference >= 0) {
@@ -598,7 +595,7 @@
               score.add(_item.interval);
               logger.write(`${_item.name} pickup ${difference} seconds after spawn`, _item.fg);
             } else {
-              logger.write(`${_item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, 'grey');
+              logger.write(`${_item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, "grey");
             }
           }
         }
