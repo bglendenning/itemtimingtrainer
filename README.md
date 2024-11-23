@@ -10,12 +10,13 @@ spawn time for colored armors is 25 seconds, and, for megahealth, 35 seconds. Ma
 many context switches and distractions, which can lead to difficulty for players to mindfully perform the calculations
 necessary to compute a picked up item's next spawn time. Additional difficulty is presented when the player must
 calculate a spawn time that extends into the next minute of the match, because determining the remainder over _60_ of,
-for instance, 48 + 35, isn't commonly an intuitive process for those familiar with decimal calculations.
+for instance, _48 + 35_, isn't commonly an intuitive process for those familiar with decimal calculations.
 
 Item Timing Trainer was designed to work similarly to flash card practice. Through repetitive practice, the player will
 develop familiarity with the calculations, and over time will come to recognize patterns and relationships in the
 process, and memorize results, such that, when in game, the player will no longer experience the stress of calculating
-spawn times, and can focus on building the habits of being mindful of spawn times when items are picked up.
+spawn times, and can focus on building the habits of being mindful of spawn times when items are picked up, and of
+maintaining multiple spawn times in memory over time.
 
 The project is no longer actively developed. It is left for the posterity of those who may find themselves interested in
 mastering this esoteric skill.
@@ -25,6 +26,9 @@ mastering this esoteric skill.
 Clone the repository and open `index.html` in a web browser. In addition to the item timing aspect of the project, a
 simple target practice activity is provided. The intent is to give the player an activity to perform while practicing
 timing in order to simulate--to a much smaller degree--the distracting multitasking required by arena FPS games.
+
+The timescale can be adjusted in increments of _1_. This will multiply the rate at which the timer seconds accrue,
+allowing players to introduce greater challenge as they adapt to the tasks. Score is multiplied by the timescale.
 
 ## Customization
 
