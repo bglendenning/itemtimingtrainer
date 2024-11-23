@@ -25,7 +25,7 @@ mastering this esoteric skill.
 
 Clone the repository and open `index.html` in a web browser. In addition to the item timing aspect of the project, a
 simple target practice activity is provided. The intent is to give the player an activity to perform while practicing
-timing in order to simulate--to a much smaller degree--the distracting multitasking required by arena FPS games.
+timing in order to simulate&mdash;to a much smaller degree&mdash;the distracting multitasking required by arena FPS games.
 
 The timescale can be adjusted in increments of _1_. This will multiply the rate at which the timer seconds accrue,
 allowing players to introduce greater challenge as they adapt to the tasks. Score is multiplied by the timescale.
