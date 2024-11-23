@@ -36,8 +36,8 @@ Though Item Timing Trainer was designed to represent Quake Live attributes, vari
 
 ### Items
 
-Items are [represented as objects](https://github.com/bglendenning/itemtimingtrainer/blob/main/index.html#L249-L277) in
-the return value of [Config.setConfig](https://github.com/bglendenning/itemtimingtrainer/blob/main/index.html#L195).
+Items are [represented as objects](index.html#L249-L277) in
+the return value of [Config.setConfig](index.html#L200).
 Items can be added, removed, or edited. The data structure of an item follows:
 
 * `name`: Used for logging training activity.
@@ -45,15 +45,15 @@ Items can be added, removed, or edited. The data structure of an item follows:
 * `interval`: The interval, in seconds, after picking up the item that it will spawn.
 * `spawnTime`: The time, in seconds, at which the item will next spawn.
 * `bg`: The background color of the item's DOM element. Colors are mapped to CSS classes in
-  [bgColors](https://github.com/bglendenning/itemtimingtrainer/blob/main/index.html#L186-L193).
+  [bgColors](index.html#L186-L193).
 * `fg`: The color of the item's related log entries. Colors are mapped to CSS classes in
-  [fgColors](https://github.com/bglendenning/itemtimingtrainer/blob/main/index.html#L177-L184)
+  [fgColors](index.html#L177-L184)
 
 ### Target
 
 The target configuration is
-[represented as an object](https://github.com/bglendenning/itemtimingtrainer/blob/main/index.html#L208-L222) in the
-return value of [Config.setConfig](https://github.com/bglendenning/itemtimingtrainer/blob/main/index.html#L195). The
+[represented as an object](index.html#L208-L222) in the
+return value of [Config.setConfig](index.html#L200). The
 data structure of an item follows:
 
 * `target.dimensions.width`: The width, in pixels, of the target.
