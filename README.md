@@ -1,9 +1,9 @@
 # Item Timing Trainer
 
 Item Timing Trainer was created around the peak of [Quake Live](https://store.steampowered.com/app/282440/Quake_Live/)
-player population. Quake Live is an arena FPS with some game types that the player benefits from being able to
-anticipate when power-ups will spawn during a match. The calculations for determining when a power-up will spawn after
-picking it up can be confusing for unaccustomed players.
+player population. Quake Live is an arena FPS with some game types in which the player benefits from developing the
+ability to anticipate when power-ups will spawn during a match. The calculations for determining when a power-up will
+spawn after picking it up can be confusing for unaccustomed players.
 
 As an example, Quake Live duel maps feature two common forms of power-ups: megahealth and colored armors. The standard
 spawn time for colored armors is 25 seconds, and, for megahealth, 35 seconds. Matches can be intensely dynamic, with
@@ -32,7 +32,8 @@ allowing players to introduce greater challenge as they adapt to the tasks. Scor
 
 ## Customization
 
-Though Item Timing Trainer was designed to represent Quake Live attributes, various features can be easily customized.
+Though Item Timing Trainer was designed to represent Quake Live item properties, various features can be easily
+customized.
 
 ### Items
 
