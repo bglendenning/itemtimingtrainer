@@ -27,9 +27,9 @@ demands, or compromise with team members.
 
 # Using Item Timing Trainer
 
-Clone the repository and open `index.html` in a web browser. In addition to the item timing aspect of the project, a
-simple target practice activity is provided. The intent is to give the player a task to perform while practicing timing
-to simulate a small amount of the distracting multitasking required by arena FPS games.
+Clone the repository and open `index.html` in a web browser. In addition to the item timing aspect of the project, an
+optional target practice activity is provided. The intent is to give the player a task to perform while practicing
+timing to simulate a small amount of the distracting multitasking required by arena FPS games.
 
 The timescale can be adjusted in increments of _1_. This will multiply the rate at which the timer seconds accrue,
 allowing players to introduce greater challenge as they adapt to the process. Activity point values are multiplied by
