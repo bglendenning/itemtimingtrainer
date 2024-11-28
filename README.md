@@ -41,7 +41,7 @@ customized.
 
 ### Items
 
-Items are [defined](index.html#L632-L657) in the `Items` class.
+Items are [defined](index.html#L633-L658) in the `Items` class.
 
 #### Item Properties
 
@@ -55,7 +55,7 @@ Items are [defined](index.html#L632-L657) in the `Items` class.
 
 ### Target
 
-The target defaults and point value are [defined](index.html#L477-482) in the `Target` class.
+The target defaults and point value are [defined](index.html#L477-L482) in the `Target` class.
 
 * `target.defaults.left`: The target DOM element's default left position in pixels.
 * `target.defaults.top`: The target DOM element's default top position in pixels.
