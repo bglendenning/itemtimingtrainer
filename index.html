@@ -4,11 +4,15 @@
   <head>
     <meta charset="utf-8">
     <meta name="author" content="Brandan Glendenning">
-    <meta name="description" content="Arena shooter item timing trainer.">
+    <meta name="description" content="Arena FPS item timing trainer.">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Arena Shooter Item Timing Trainer</title>
+
+    <title>Item Timing Trainer</title>
 
     <link rel="icon" href="data:,">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap">
 
     <style>
       :root {
@@ -17,62 +21,81 @@
         --color-red: #c95b51;
         --color-blue: #5a70a0;
         --color-white: #fff7eb;
-        --color-grey: #808080;
+        --color-grey: #707070;
+        --color-dark-grey: #303030;
+        --color-light-grey: #A0A0A0;
+        --color-black: #040404;
+      }
+
+      html {
+        box-sizing: border-box;
+      }
+
+      *, *:before, *:after {
+        box-sizing: inherit;
       }
 
       body {
-        background-color: #010101;
-        color: #fff7eb;
-        font-family: sans-serif;
+        background-color: var(--color-black);
+        color: var(--color-light-grey);
+        font-family: "Quicksand", sans-serif;
+        margin: 0;
       }
 
       a {
-        color: #5a70a0;
+        color: var(--color-white);
+        font-weight: 500;
         text-decoration: none;
       }
 
       .item {
-        color: #010101;
+        border-radius: 5px;
+        color: var(--color-black);
         cursor: pointer;
         font-weight: bold;
         height: 80px;
         width: 80px;
-        margin: 0 20px 0 20px;
         padding: 10px;
       }
 
-      .item:hover, #targetObject:hover, a:hover {
+      .item:hover, a:hover {
         opacity: 0.8;
       }
 
-      #log {
-        border-left: 1px #fff7eb dotted;
-        margin: 40px auto 0 auto;
-        padding-left: 20px;
-        width: 600px;
+      #container {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        gap: 20px;
+        height: 100vh;
       }
 
-      #log h1 {
-        font-size: 1em;
+      #logHeader {
+        display: flex;
+        flex-flow: row;
+        width: 50vw;
+        min-width: 400px;
       }
 
-      #clearLogs {
-        margin-top: 20px;
+      #logHeader div {
+        width: 100%;
       }
 
       #logs {
-        height: 300px;
-        margin: 20px auto 0 auto;
+        border-top: 1px var(--color-grey) dashed;
+        flex: 1;
         overflow: auto;
+        width: 50vw;
+        min-width: 400px;
       }
 
       #targetForm {
-        margin-top: 20px;
         text-align: center;
       }
 
       #target {
-        background-color: #5f8258;
+        background-color: var(--color-green);
+        border-radius: 50%;
         cursor: pointer;
         position: absolute;
         z-index: 1;
@@ -80,12 +103,12 @@
 
       #timer {
         font-size: 50px;
-        padding: 0 0 10px 0;
       }
 
       #items {
         display: flex;
         flex-flow: row wrap;
+        gap: 20px;
         justify-content: center;
       }
 
@@ -145,488 +168,576 @@
 
   <body>
     <div id="target"></div>
-    <div id="timer">
-      <div id="timerAdmin">
-        <a href="javascript:void(0)" id="timerStart">start</a>
-        <a href="javascript:void(0)" id="timerStop">stop</a>
-        <a href="javascript:void(0)" id="timerReset">reset</a>
-        <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
-        <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
+
+    <div id="container">
+      <div id="timer">
+        <div id="timerAdmin">
+          <a href="javascript:void(0)" id="timerStart">start</a>
+          <a href="javascript:void(0)" id="timerStop">stop</a>
+          <a href="javascript:void(0)" id="timerReset">reset</a>
+          <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
+          <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
+        </div>
+
+        <div id="timerDisplay">
+          <span id="timerClock">00:00</span>
+          <span id="timerMultiplier">1</span>x
+        </div>
       </div>
 
-      <div id="timerDisplay">
-        <span id="timerClock">00:00</span>
-        <span id="timerMultiplier">1x</span>
+      <div id="items"></div>
+
+      <div id="targetForm">
+        <label><input type="checkbox" id="targetToggle"> Enable randomized target</label>
       </div>
-    </div>
 
-    <div id="items"></div>
+      <div id="logHeader">
+        <div>High Score: <span id="scoreHigh"></span></div>
 
-    <div id="targetForm">
-      <label><input type="checkbox" id="targetToggle"> Enable randomized target.</label>
-    </div>
+        <div style="text-align: center;">Session Score: <span id="scoreSession"></span></div>
 
-    <div id="log">
-      <div>High Score: <span id="scoreHigh">0000000000</span></div>
-
-      <div>Session Score: <span id="scoreSession">0000000000</span></div>
+        <div style="text-align: right;">
+          <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
+        </div>
+      </div>
 
       <div id="logs">
         <p>
-          Click <strong>Start</strong> to start the timer. While the timer is active, click the
-          colored squares to earn points. Each square displays a number indicating how many seconds
-          you must wait to register a new click for that item. A registered click is worth the
-          square's indicated value multiplied by the timescale. <strong>-</strong> &
-          <strong>+</strong> can be used to manipulate the rate at which the timer accrues. Click
-          <strong>Stop</strong> to stop the timer, and <strong>Reset</strong> to stop the timer, set
-          the session score to 0, and set the target position to the top-left corner of the browser
-          window.
+          Each colored square represents an arena FPS <i>item</i>. When a session is started, each
+          item is interactive, representing that the item can be <i>picked up</i>. Clicking an item
+          represents picking that item up during a match. Each item displays the duration for which
+          the item will become non-interactive after being picked up, representing the item's
+          <i>respawn delay</i>. The number of points scored for picking up an item is the difference
+          between the item's respawn delay value and the time after which the item spawned that the
+          item was picked up. Points are multiplied by the timescale multiplier value. It is
+          possible to score negative points.
         </p>
 
         <p>
-          Check <strong>Enable randomized target</strong> to make the target visible. Each target
-          clicked is worth 1 point multiplied by the timescale.
+          <strong>Start</strong> begins or continues a stopped session. <strong>-</strong> &
+          <strong>+</strong> manipulate the rate at which the timer elapses. <strong>Stop</strong>
+          pauses the timer. <strong>Reset</strong> ends the session, sets the session score to 0,
+          and resets the target to its original position.
+        </p>
+
+        <p>
+          Check <strong>Enable randomized target</strong> to make the randomized target visible.
+          Each target clicked is worth 1 point. Points are multiplied by the timescale multiplier
+          value.
         </p>
       </div>
-
-      <div>
-        <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
-      </div>
     </div>
-
-    <script type="text/javascript">
-      function pad(value, length) {
-        let valueString = value.toString();
-
-        while (valueString.length < length) {
-          valueString = "0" + valueString;
-        }
-
-        return valueString;
-      }
-
-      class Logger {
-        constructor() {
-          // DOM elements
-          this.elements = {
-            logs: document.getElementById("logs"),
-            clear: document.getElementById("clearLogs"),
-          };
-
-          // Event listeners
-          this.elements.clear.addEventListener("click", this.clearElementClick);
-        }
-
-        createLogEntry(content, color) {
-          const paragraphElement = document.createElement("p");
-          paragraphElement.textContent = `${timer.formatTime()} - ${content}`;
-          paragraphElement.classList.add(color);
-          this.elements.logs.prepend(paragraphElement);
-        }
-
-        clearElementClick = () => {
-          this.elements.logs.textContent = "";
-        }
-      }
-
-      class Score {
-        constructor() {
-          // DOM elements
-          this.elements = {
-            session: document.getElementById("scoreSession"),
-            high: document.getElementById("scoreHigh"),
-            multiplier: document.getElementById("scoreMultiplier")
-          };
-
-          // Event listeners
-          timer.elements.reset.addEventListener("click", () => this.session = 0);
-
-          // Default values
-          this.high = 0;
-          this.session = 0;
-          this.length = 10;
-
-          this.updateHighElementText();
-          this.updateSessionElementText();
-        }
-
-        #high = 0;
-
-        get high() {
-          return this.#high;
-        }
-
-        set high(score) {
-          this.#high = score;
-        }
-
-        updateHighElementText() {
-          this.elements.session.textContent = pad(this.session, this.length);
-        }
-
-        #session = 0;
-
-        get session() {
-          return this.#session;
-        }
-
-        set session(points) {
-          this.#session = points
-          this.elements.session.textContent = pad(this.session, this.length);
-
-          if (this.#session > this.high) {
-            this.high = this.#session;
-            this.elements.high.textContent = pad(this.high, this.length);
-          }
-        }
-
-        addPointsToSession(points) {
-          this.session += points * timer.multiplier
-        }
-
-        updateSessionElementText() {
-          this.elements.session.textContent = pad(this.session, this.length);
-        }
-      }
-
-      class Target {
-        constructor() {
-          // DOM elements
-          this.elements = {
-            target: document.getElementById("target"),
-            targetToggle: document.getElementById("targetToggle"),
-          };
-          this.elements.target.style.left = `${this.targetElementLeft}px`;
-          this.elements.target.style.top = `${this.targetElementTop}px`;
-          this.elements.target.style.width = `${this.targetElementWidth}px`;
-          this.elements.target.style.height = `${this.targetElementHeight}px`;
-          this.targetElementVisibility = this.elements.targetToggle;
-          this.elements.target.style.visibility = this.targetElementVisibility;
-
-          // Event listeners
-          this.elements.target.addEventListener("click", this.targetElementClick);
-          this.elements.targetToggle.addEventListener("click", this.targetToggleElementClick);
-          timer.elements.reset.addEventListener("click", this.resetTargetElementPosition);
-          timer.elements.reset.addEventListener("click", this.resetTargetElementDimensions);
-        }
-
-        #targetElementLeft = 50; // Pixels
-
-        get targetElementLeft() {
-          return this.#targetElementLeft;
-        }
-
-        set targetElementLeft(left) {
-          this.#targetElementLeft = left;
-        }
-
-        #targetElementTop = 50; // Pixels
-
-        get targetElementTop() {
-          return this.#targetElementTop;
-        }
-
-        set targetElementTop(top) {
-          this.#targetElementTop = top;
-        }
-
-        #targetElementWidth = 25; // Pixels
-
-        get targetElementWidth() {
-          return this.#targetElementWidth;
-        }
-
-        set targetElementWidth(width) {
-          this.#targetElementWidth = width;
-        }
-
-        #targetElementHeight = 25; // Pixels
-
-        get targetElementHeight() {
-          return this.#targetElementHeight;
-        }
-
-        set targetElementHeight(height) {
-          this.#targetElementHeight = height;
-        }
-
-        #targetElementVisibility = "hidden"
-
-        get targetElementVisibility() {
-          return this.#targetElementVisibility;
-        }
-
-        set targetElementVisibility(element) {
-          this.#targetElementVisibility = element.checked ? "visible" : "hidden";
-        }
-
-        updateTargetElement() {
-          this.elements.target.style.left = `${this.targetElementLeft}px`;
-          this.elements.target.style.top = `${this.targetElementTop}px`;
-          this.elements.target.style.width = `${this.targetElementWidth}px`;
-          this.elements.target.style.height = `${this.targetElementHeight}px`;
-          this.elements.target.style.visibility = this.targetElementVisibility;
-        }
-
-        resetTargetElementPosition = () => {
-          this.targetElementLeft = 50;
-          this.targetElementTop = 50;
-          this.updateTargetElement();
-        }
-
-        resetTargetElementDimensions = () => {
-          this.targetElementWidth = 25;
-          this.targetElementHeight = 25;
-          this.updateTargetElement();
-        }
-
-        setRandomTargetElementPosition() {
-          const maxLeft = window.innerWidth - this.targetElementWidth - 50;
-          const maxTop = window.innerHeight - this.targetElementHeight - 50;
-          this.targetElementLeft = Math.floor((Math.random() * maxLeft) + 50);
-          this.targetElementTop = Math.floor((Math.random() * maxTop) + 50);
-          this.updateTargetElement();
-        }
-
-        targetElementClick = (event) => {
-          event.stopPropagation();
-
-          if (timer.interval && this.elements.targetToggle.checked) {
-            this.setRandomTargetElementPosition();
-            score.addPointsToSession(1);
-          }
-        }
-
-        targetToggleElementClick = (event) => {
-          this.targetElementVisibility = event.target;
-          this.updateTargetElement();
-        }
-      }
-
-      class Timer {
-        constructor() {
-          // DOM elements
-          this.elements = {
-            clock: document.getElementById("timerClock"),
-            start: document.getElementById("timerStart"),
-            stop: document.getElementById("timerStop"),
-            reset: document.getElementById("timerReset"),
-            multiplier: document.getElementById("timerMultiplier"),
-            multiplierDecrease: document.getElementById("timerMultiplierDecrease"),
-            multiplierIncrease: document.getElementById("timerMultiplierIncrease"),
-          };
-          this.updateClockElementText();
-
-          // Event listeners
-          this.elements.start.addEventListener("click", this.startElementClick);
-          this.elements.stop.addEventListener("click", this.stopElementClick);
-          this.elements.reset.addEventListener("click", this.resetElementClick);
-          this.elements.multiplierDecrease.addEventListener("click", this.multiplierDecreaseElementClick);
-          this.elements.multiplierIncrease.addEventListener("click", this.multiplierIncreaseElementClick);
-        }
-
-        #seconds = 0;
-
-        get seconds() {
-          return this.#seconds;
-        }
-
-        set seconds(seconds) {
-          this.#seconds = seconds;
-        }
-
-        #interval = null;
-
-        get interval() {
-          return this.#interval;
-        }        
-
-        set interval(interval) {
-          clearInterval(this.interval);
-
-          if (interval) {
-            this.#interval = setInterval(() => {
-              this.seconds += 1;
-              this.updateClockElementText();
-            }, (1000 / this.multiplier));
-          } else {
-            this.#interval = null;
-          }
-        }
-
-        #multiplier = 1;
-
-        get multiplier() {
-          return this.#multiplier;
-        }
-
-        set multiplier(multiplier) {
-          if (multiplier > 0) {
-            this.#multiplier = multiplier;
-          }
-        }
-
-        updateMultiplierElementText() {
-          this.elements.multiplier.textContent = `${this.multiplier}x`;
-        }
-
-        formatTime() {
-          const minutes = pad(Math.floor(this.seconds / 60), 2);
-          let seconds;
-
-          if (this.seconds >= 60) {
-            seconds = pad(this.seconds % 60, 2);
-          } else {
-            seconds = pad(this.seconds, 2);
-          }
-
-          return `${minutes}:${seconds}`;
-        }
-
-        updateClockElementText() {
-          this.elements.clock.textContent = this.formatTime();
-        }
-
-        startElementClick = () => {
-          if (!this.interval) {
-            this.interval = true;
-          }
-        }
-
-        stopElementClick = () => {
-          if (this.interval) {
-            this.interval = false;
-          }
-        }
-
-        resetElementClick = () => {
-          if (this.interval) {
-            this.interval = false;
-          }
-
-          this.seconds = 0;
-          this.updateClockElementText();
-        }
-
-        multiplierDecreaseElementClick = () => {
-          this.multiplier -= 1;
-          this.updateMultiplierElementText();
-
-          if (this.interval) {
-            this.interval = true;
-          }
-        }
-
-        multiplierIncreaseElementClick = () => {
-          this.multiplier += 1
-          this.updateMultiplierElementText();
-
-          if (this.interval) {
-            this.interval = true;
-          }
-        }
-      }
-
-      class Items {
-        constructor() {
-          this.items = [
-            {
-              presentationName: "Red Armor",
-              domElementId: "itemArmorRed",
-              spawnIntervalSeconds: 25,
-              spawnTimeSeconds: 0,
-              backgroundColorClass: "background-color-red",
-              logTextColor: "color-red"
-            },
-            this.items = {
-              presentationName: "Yellow Armor",
-              domElementId: "itemArmorYellow",
-              spawnIntervalSeconds: 25,
-              spawnTimeSeconds: 0,
-              backgroundColorClass: "background-color-yellow",
-              logTextColor: "color-yellow"
-            },
-            this.items = {
-              presentationName: "Megahealth",
-              domElementId: "itemHealthMega",
-              spawnIntervalSeconds: 35,
-              spawnTimeSeconds: 0,
-              backgroundColorClass: "background-color-blue",
-              logTextColor: "color-blue"
-            },
-          ];
-
-          // DOM elements
-          this.elements = {
-            items: document.getElementById("items"),
-          }
-
-          // Create DOM elements from `this.items`
-          this.items.forEach((item) => {
-            const element = document.createElement("div");
-            element.setAttribute("id", item.domElementId);
-            element.setAttribute("data-spawn-interval-seconds", item.spawnIntervalSeconds);
-            element.classList.add("item", item.backgroundColorClass);
-            element.textContent = item.spawnIntervalSeconds;
-            this.elements.items.append(element);
-          });
-
-          // Event listeners
-          timer.elements.reset.addEventListener("click", this.resetElementClick);
-
-          this.items.forEach((item) => {
-            const element = document.getElementById(item.domElementId);
-            element.addEventListener("click", this.itemElementClick);
-          });
-        }
-
-        #items = []
-
-        get items() {
-          return this.#items;
-        }
-
-        set items(items) {
-          this.#items = items;
-        }
-
-        itemElementClick = (event) => {
-          if (timer.interval) {
-            const item = this.items.find((item) => item.domElementId === event.target.getAttribute("id"));
-            const difference = timer.seconds - item.spawnTimeSeconds;
-
-            if (difference >= 0) {
-              item.spawnTimeSeconds = timer.seconds + item.spawnIntervalSeconds;
-              score.addPointsToSession(item.spawnIntervalSeconds);
-              logger.createLogEntry(
-                `${item.presentationName} picked up ${difference} seconds after spawn`,
-                item.logTextColor
-              );
-            } else {
-              logger.createLogEntry(
-                `${item.presentationName} pick-up attempted ${Math.abs(difference)} seconds before spawn`,
-                "grey"
-              );
-            }
-          }
-        }
-
-        resetElementClick = () => {
-          const items = [...this.items];
-
-          items.forEach((item) => {
-            item.spawnTimeSeconds = 0;
-          });
-
-          this.items = items;
-        }
-      }
-
-      const logger = new Logger();
-      const timer = new Timer();
-      const score = new Score();
-      const target = new Target();
-      const items = new Items();
-    </script>
   </body>
+
+  <script type="text/javascript">
+    /** Convert `number` to string `paddedValue` and left-pad with zeroes to length `length` */
+    function pad(number, length) {
+      let paddedValue = number.toString();
+
+      while (paddedValue.length < length) {
+        paddedValue = "0" + paddedValue;
+      }
+
+      return paddedValue;
+    }
+
+    /** Manipulate DOM elements related to interacting with and presenting the logger. */
+    class Logger {
+      constructor(timer) {
+        // For rendering timestamps in log entries
+        this.timer = timer;
+
+        // DOM elements
+        this.elements = {
+          logs: document.getElementById("logs"),
+          clear: document.getElementById("clearLogs"),
+        };
+
+        // Event listeners
+        this.elements.clear.addEventListener("click", this.clearElementClick);
+      }
+
+      /** Create and style a paragraph element, then prepend it to the logs DOM element. */
+      createLogEntry(content, color) {
+        const paragraphElement = document.createElement("p");
+        paragraphElement.textContent = `${this.timer.formatTime()} - ${content}`;
+        paragraphElement.classList.add(color);
+        this.elements.logs.prepend(paragraphElement);
+      }
+
+      /** Clear logs DOM element. */
+      clearElementClick = () => {
+        this.elements.logs.textContent = "";
+      }
+    }
+
+    /**
+     * Track time and manipulate DOM elements related to interacting with and presenting the
+     * timer.
+     */
+    class Timer {
+      constructor() {
+        // DOM elements
+        this.elements = {
+          clock: document.getElementById("timerClock"),
+          start: document.getElementById("timerStart"),
+          stop: document.getElementById("timerStop"),
+          reset: document.getElementById("timerReset"),
+          multiplier: document.getElementById("timerMultiplier"),
+          multiplierDecrease: document.getElementById("timerMultiplierDecrease"),
+          multiplierIncrease: document.getElementById("timerMultiplierIncrease"),
+        };
+
+        this.seconds = 0;
+        this.interval = false;
+        this.multiplier = 1;
+
+        // Event listeners
+        this.elements.start.addEventListener("click", this.startElementClick);
+        this.elements.stop.addEventListener("click", this.stopElementClick);
+        this.elements.reset.addEventListener("click", this.resetElementClick);
+        this.elements.multiplierDecrease.addEventListener("click", this.multiplierDecreaseElementClick);
+        this.elements.multiplierIncrease.addEventListener("click", this.multiplierIncreaseElementClick);
+      }
+
+      /** The session's elapsed seconds. Used to render the clock and validate item clicks. */
+      #seconds;
+
+      get seconds() {
+        return this.#seconds;
+      }
+
+      set seconds(seconds) {
+        this.#seconds = seconds;
+        this.updateClockElementText();
+      }
+
+      updateClockElementText() {
+        this.elements.clock.textContent = this.formatTime();
+      }
+
+      /** A `setInterval` object or `null`. Used to track the session's elapsed seconds. */
+      #interval;
+
+      get interval() {
+        return this.#interval;
+      }
+
+      set interval(interval) {
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+
+        this.#interval = interval ? setInterval(() => this.seconds += 1, (1000 / this.multiplier)) : null;
+      }
+
+      /** An integer factor used to increase or decrease the `setInterval` `delay` parameter. */
+      #multiplier;
+
+      get multiplier() {
+        return this.#multiplier;
+      }
+
+      set multiplier(multiplier) {
+        if (multiplier > 0) {
+          this.#multiplier = multiplier;
+          this.updateMultiplierElementText();
+        }
+      }
+
+      updateMultiplierElementText() {
+        this.elements.multiplier.textContent = this.multiplier;
+      }
+
+      /**
+       * Calculate minutes and remainder seconds of `this.seconds`, pad both, and return a
+       * formatted time string.
+       */
+      formatTime() {
+        const minutes = pad(Math.floor(this.seconds / 60), 2);
+        const seconds = this.seconds >= 60 ? pad(this.seconds % 60, 2) : pad(this.seconds, 2);
+
+        return `${minutes}:${seconds}`;
+      }
+
+      /** Start the session. */
+      startElementClick = () => {
+        if (!this.interval) {
+          this.interval = true;
+        }
+      }
+
+      /** Stop the session. */
+      stopElementClick = () => {
+        if (this.interval) {
+          this.interval = false;
+        }
+      }
+
+      /** Reset the session. */
+      resetElementClick = () => {
+        if (this.interval) {
+          this.interval = false;
+        }
+
+        this.seconds = 0;
+        this.multiplier = 1;
+      }
+
+      /** Increase the interval delay by decreasing the multiplier factor. */
+      multiplierDecreaseElementClick = () => {
+        this.multiplier -= 1;
+
+        // Put new multiplier into effect by updating `this.interval` if the session is active
+        if (this.interval) {
+          this.interval = true;
+        }
+      }
+
+      /** Decrease the interval delay by increasing the multiplier factor. */
+      multiplierIncreaseElementClick = () => {
+        this.multiplier += 1
+
+        // Put new multiplier into effect by updating `this.interval` if the session is active
+        if (this.interval) {
+          this.interval = true;
+        }
+      }
+    }
+
+    /**
+     * Track the score and manipulate DOM elements related to interacting with and presenting the
+     * score.
+     */
+    class Score {
+      // The string length to pad scores to
+      length = 10;
+
+      constructor(timer) {
+        this.timer = timer;
+
+        // DOM elements
+        this.elements = {
+          session: document.getElementById("scoreSession"),
+          high: document.getElementById("scoreHigh"),
+          multiplier: document.getElementById("scoreMultiplier")
+        };
+
+        this.high = 0;
+        this.session = 0;
+
+        // Event listeners
+        this.timer.elements.reset.addEventListener("click", () => this.session = 0);
+      }
+
+      /** An integer used to track the greatest session score. */
+      #high;
+
+      get high() {
+        return this.#high;
+      }
+
+      set high(score) {
+        this.#high = score;
+        this.updateHighElementText();
+      }
+
+      updateHighElementText() {
+        this.elements.high.textContent = pad(this.high, this.length);
+      }
+
+      /** An integer used to track the session score. */
+      #session;
+
+      get session() {
+        return this.#session;
+      }
+
+      set session(points) {
+        this.#session = points;
+        this.updateSessionElementText();
+
+        if (this.#session > this.high) {
+          this.high = this.#session;
+        }
+      }
+
+      /** Multiply `points` by `timer.multiplier` and add to the session score. */
+      addPointsToSessionScore(points) {
+        this.session += points * this.timer.multiplier
+      }
+
+      updateSessionElementText() {
+        this.elements.session.textContent = pad(this.session, this.length);
+      }
+    }
+
+    /** Manipulate DOM elements related to interacting with and presenting the target. */
+    class Target {
+      constructor(timer, score) {
+        this.timer = timer;
+        this.score = score;
+
+        // DOM elements
+        this.elements = {
+          target: document.getElementById("target"),
+          targetToggle: document.getElementById("targetToggle"),
+        };
+        this.elements.target.style.left = `${this.targetElementLeft}px`;
+        this.elements.target.style.top = `${this.targetElementTop}px`;
+        this.elements.target.style.width = `${this.targetElementWidth}px`;
+        this.elements.target.style.height = `${this.targetElementHeight}px`;
+
+        this.targetElementLeft = 50;
+        this.targetElementTop = 50;
+        this.targetElementWidth = 25;
+        this.targetElementHeight = 25;
+        this.targetElementVisibility = this.elements.targetToggle;
+
+        // Event listeners
+        this.elements.target.addEventListener("click", this.targetElementClick);
+        this.elements.targetToggle.addEventListener("click", this.targetToggleElementClick);
+        this.timer.elements.reset.addEventListener("click", this.resetTargetElementPosition);
+        this.timer.elements.reset.addEventListener("click", this.resetTargetElementDimensions);
+      }
+
+      /** The left position, in pixels, of the target DOM element */
+      #targetElementLeft;
+
+      get targetElementLeft() {
+        return this.#targetElementLeft;
+      }
+
+      set targetElementLeft(left) {
+        this.#targetElementLeft = left;
+        this.updateTargetElement();
+      }
+
+      /** The top position, in pixels, of the target DOM element */
+      #targetElementTop;
+
+      get targetElementTop() {
+        return this.#targetElementTop;
+      }
+
+      set targetElementTop(top) {
+        this.#targetElementTop = top;
+        this.updateTargetElement();
+      }
+
+      /** The width, in pixels, of the target DOM element */
+      #targetElementWidth;
+
+      get targetElementWidth() {
+        return this.#targetElementWidth;
+      }
+
+      set targetElementWidth(width) {
+        this.#targetElementWidth = width;
+        this.updateTargetElement();
+      }
+
+      /** The height, in pixels, of the target DOM element */
+      #targetElementHeight;
+
+      get targetElementHeight() {
+        return this.#targetElementHeight;
+      }
+
+      set targetElementHeight(height) {
+        this.#targetElementHeight = height;
+        this.updateTargetElement();
+      }
+
+      /** The CSS `visibility` of the target DOM element */
+      #targetElementVisibility;
+
+      get targetElementVisibility() {
+        return this.#targetElementVisibility;
+      }
+
+      set targetElementVisibility(targetToggleElement) {
+        this.#targetElementVisibility = targetToggleElement.checked ? "visible" : "hidden";
+        this.updateTargetElement();
+      }
+
+      updateTargetElement() {
+        this.elements.target.style.left = `${this.targetElementLeft}px`;
+        this.elements.target.style.top = `${this.targetElementTop}px`;
+        this.elements.target.style.width = `${this.targetElementWidth}px`;
+        this.elements.target.style.height = `${this.targetElementHeight}px`;
+        this.elements.target.style.visibility = this.targetElementVisibility;
+      }
+
+      resetTargetElementPosition = () => {
+        this.targetElementLeft = 50;
+        this.targetElementTop = 50;
+      }
+
+      resetTargetElementDimensions = () => {
+        this.targetElementWidth = 25;
+        this.targetElementHeight = 25;
+      }
+
+      setRandomTargetElementPositions() {
+        const maxLeft = window.innerWidth - this.targetElementWidth - 50;
+        const maxTop = window.innerHeight - this.targetElementHeight - 50;
+        this.targetElementLeft = Math.floor((Math.random() * maxLeft) + 50);
+        this.targetElementTop = Math.floor((Math.random() * maxTop) + 50);
+      }
+
+      setRandomTargetElementDimensions() {
+        const value = Math.floor(Math.random() * 50 + 15);
+        this.targetElementWidth = value;
+        this.targetElementHeight = value;
+      }
+
+      /**
+       * Set the target DOM element to a random position in the browser window and add to the
+       * session score.
+       */
+      targetElementClick = () => {
+        if (this.timer.interval && this.elements.targetToggle.checked) {
+          this.setRandomTargetElementPositions();
+          this.setRandomTargetElementDimensions();
+          this.score.addPointsToSessionScore(1);
+        }
+      }
+
+      targetToggleElementClick = (event) => {
+        this.targetElementVisibility = event.target;
+      }
+    }
+
+    /**
+     * Track items and manipulate DOM elements related to interacting with and presenting items.
+     */
+    class Items {
+      constructor(timer, logger, score) {
+        this.timer = timer;
+        this.logger = logger;
+        this.score = score;
+
+        // DOM elements
+        this.elements = {
+          items: document.getElementById("items"),
+        }
+
+        this.items = [
+          {
+            presentationName: "Red Armor",
+            domElementId: "itemArmorRed",
+            spawnIntervalSeconds: 25,
+            spawnTimeSeconds: 0,
+            backgroundColorClass: "background-color-red",
+            logTextColor: "color-red"
+          },
+          {
+            presentationName: "Yellow Armor",
+            domElementId: "itemArmorYellow",
+            spawnIntervalSeconds: 25,
+            spawnTimeSeconds: 0,
+            backgroundColorClass: "background-color-yellow",
+            logTextColor: "color-yellow"
+          },
+          {
+            presentationName: "Megahealth",
+            domElementId: "itemHealthMega",
+            spawnIntervalSeconds: 35,
+            spawnTimeSeconds: 0,
+            backgroundColorClass: "background-color-blue",
+            logTextColor: "color-blue"
+          },
+        ];
+
+        // Event listeners
+        this.timer.elements.reset.addEventListener("click", this.resetElementClick);
+      }
+
+      /**
+       * An array of item objects containing information. Used to manipulate the DOM and track
+       * item interactivity.
+       */
+      #items;
+
+      get items() {
+        return this.#items;
+      }
+
+      set items(items) {
+        this.#items = items;
+        this.createItemsDomElements(items);
+      }
+
+      /**
+       * Create a DOM element for each item in `items`, style the element, then create an
+       * `EventListener` for the element.
+       */
+      createItemsDomElements(items) {
+        items.forEach((item) => {
+          const element = document.createElement("div");
+          element.setAttribute("id", item.domElementId);
+          element.classList.add("item", item.backgroundColorClass);
+          element.textContent = item.spawnIntervalSeconds;
+          this.elements.items.append(element);
+          element.addEventListener("click", this.itemElementClick);
+        });
+      }
+
+      /**
+       * Determine if the item clicked is interactive, and, if it is, add the item's score value
+       * to the session score, then log the click, else log the early click.
+       */
+      itemElementClick = (event) => {
+        if (this.timer.interval) {
+          // Find the item in `this.items` using the event target element's ID
+          const item = this.items.find((item) => item.domElementId === event.target.getAttribute("id"));
+          const difference = this.timer.seconds - item.spawnTimeSeconds;
+
+          // The item element is interactive
+          if (difference >= 0) {
+            // The time, in seconds, at which the item will be interactive
+            item.spawnTimeSeconds = this.timer.seconds + item.spawnIntervalSeconds;
+            this.score.addPointsToSessionScore(item.spawnIntervalSeconds - difference);
+            this.logger.createLogEntry(
+              `${item.presentationName} clicked ${difference} seconds after spawn`,
+              item.logTextColor
+            );
+          // The item element is not interactive
+          } else {
+            this.logger.createLogEntry(
+              `${item.presentationName} pick-up attempted ${Math.abs(difference)} seconds before spawn`,
+              "color-grey"
+            );
+          }
+        }
+      }
+
+      resetItemsDomElementInnerHtml() {
+        this.elements.items.textContent = "";
+      }
+
+      /**
+       * Clear the items DOM element, reset each item's `spawnTimeSeconds` so that the items are
+       * interactive when a new session starts, then set `this.items` with the updated items.
+       */
+      resetElementClick = () => {
+        this.resetItemsDomElementInnerHtml();
+        // Create a deep copy of `this.items`
+        const items = structuredClone(this.items);
+
+        items.forEach((item) => {
+          item.spawnTimeSeconds = 0;
+        });
+
+        this.items = items;
+      }
+    }
+
+    const timer = new Timer();
+    const score = new Score(timer);
+    const logger = new Logger(timer);
+    const target = new Target(timer, score);
+    const items = new Items(timer, logger, score);
+  </script>
 </html>
