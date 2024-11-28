@@ -48,9 +48,10 @@ Items are [defined](index.html#L633-L658) in the `Items` class.
 
 * `presentationName`: The name to present when logging item clicks.
 * `domElementId`: A valid DOM element ID for use in creating the item's DOM element.
-* `spawnIntervalSeconds`: The interval between when an item is picked up and will spawn again.
+* `spawnIntervalSeconds`: The interval between when an item is picked up and when it will spawn again.
 * `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will
-   spawn. This value can be defined as greater than 0.
+   spawn. If defined as 0, the item can be picked up immediately upon starting a session, else the
+   item will spawn `spawnTimeSeconds` after the session starts.
 * `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L143-L165).
 * `logTextColorClass`: The name of one of the project's [color classes](index.html#L119-L141).
 
