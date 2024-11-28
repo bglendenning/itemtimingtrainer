@@ -13,6 +13,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Quicksand:wght@300..700&display=swap">
 
     <style>
       :root {
@@ -48,50 +49,20 @@
         text-decoration: none;
       }
 
-      .item {
-        border-radius: 5px;
-        color: var(--color-black);
-        cursor: pointer;
-        font-weight: bold;
-        height: 80px;
-        width: 80px;
-        padding: 10px;
+      em {
+        color: var(--color-white);
+        font-weight: 500;
       }
 
-      .item:hover, a:hover {
-        opacity: 0.8;
+      h1 {
+          font-size: 1.5em;
       }
 
-      #container {
-        display: flex;
-        flex-flow: column;
-        align-items: center;
-        gap: 20px;
-        height: 100vh;
+      h2 {
+          font-size: 1.1em;
       }
 
-      #logHeader {
-        display: flex;
-        flex-flow: row;
-        width: 50vw;
-        min-width: 400px;
-      }
-
-      #logHeader div {
-        width: 100%;
-      }
-
-      #logs {
-        border-top: 1px var(--color-grey) dashed;
-        flex: 1;
-        overflow: auto;
-        width: 50vw;
-        min-width: 400px;
-      }
-
-      #targetForm {
-        text-align: center;
-      }
+      /* Target */
 
       #target {
         background-color: var(--color-green);
@@ -101,9 +72,25 @@
         z-index: 1;
       }
 
-      #timer {
-        font-size: 50px;
+      /* General */
+
+      #container {
+        display: flex;
+        flex-flow: column;
+        align-items: center;
+        gap: 20px;
+        height: 100vh;
       }
+
+      #content {
+        border-top: 1px var(--color-grey) dashed;
+        flex: 1;
+        overflow: auto;
+        width: 50vw;
+        min-width: 400px;
+      }
+
+      /* Items */
 
       #items {
         display: flex;
@@ -112,9 +99,47 @@
         justify-content: center;
       }
 
-      #timerDisplay, #timerAdmin {
-        text-align: center;
+      .item {
+        border-top-right-radius: 10%;
+        border-bottom-right-radius: 10%;
+        border-bottom-left-radius: 10%;
+        color: var(--color-black);
+        cursor: pointer;
+        font-weight: bold;
+        height: 15vh;
+        min-height: 80px;
+        width: 15vh;
+        min-width: 80px;
+        padding: 10px;
       }
+
+      .item:hover, a:hover {
+        opacity: 0.8;
+      }
+
+      /* Logs */
+
+      #logsHeader {
+        display: flex;
+        flex-flow: row;
+        width: 50vw;
+        min-width: 400px;
+      }
+
+      #logsHeader div {
+        width: 100%;
+      }
+
+      #logs > p.entry {
+          font-family: "JetBrains Mono", monospace;
+          margin: 0;
+      }
+
+      #logs > p.entry:first-child {
+          margin-top: revert;
+      }
+
+      /* Color classes */
 
       .color-yellow {
         color: var(--color-yellow);
@@ -163,6 +188,24 @@
       .background-color-grey {
         background-color: var(--color-grey);
       }
+
+      /* Utility classes */
+
+      .text-center {
+        text-align: center;
+      }
+
+      .text-right {
+        text-align: right;
+      }
+
+      .text-large {
+          font-size: 2.5em;
+      }
+
+      .text-larger {
+          font-size: 4em;
+      }
     </style>
   </head>
 
@@ -170,60 +213,61 @@
     <div id="target"></div>
 
     <div id="container">
-      <div id="timer">
-        <div id="timerAdmin">
-          <a href="javascript:void(0)" id="timerStart">start</a>
-          <a href="javascript:void(0)" id="timerStop">stop</a>
-          <a href="javascript:void(0)" id="timerReset">reset</a>
-          <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
-          <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
-        </div>
+      <div class="text-center text-large">
+        <a href="javascript:void(0)" id="timerStart">Start</a>
+        <a href="javascript:void(0)" id="timerPause">Pause</a>
+        <a href="javascript:void(0)" id="timerEnd">Reset</a>
+        <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
+        <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
+      </div>
 
-        <div id="timerDisplay">
-          <span id="timerClock">00:00</span>
-          <span id="timerMultiplier">1</span>x
-        </div>
+      <div class="text-center text-larger">
+        <span id="timerClock">00:00</span>
+        <span id="timerMultiplier">1</span>x
       </div>
 
       <div id="items"></div>
 
-      <div id="targetForm">
+      <div class="text-center">
         <label><input type="checkbox" id="targetToggle"> Enable randomized target</label>
       </div>
 
-      <div id="logHeader">
+      <div id="logsHeader">
         <div>High Score: <span id="scoreHigh"></span></div>
 
-        <div style="text-align: center;">Session Score: <span id="scoreSession"></span></div>
+        <div class="text-center">Session Score: <span id="scoreSession"></span></div>
 
-        <div style="text-align: right;">
+        <div class="text-right">
           <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
         </div>
       </div>
 
-      <div id="logs">
+      <div id="content">
+        <div id="logs"></div>
+
+        <h1>Arena FPS Item Timing Trainer</h1>
+        <h2>
+          By Brandan Glendenning (<a href="https://github.com/bglendenning/itemtimingtrainer" target="new">GitHub</a>)
+        </h2>
+
         <p>
-          Each colored square represents an arena FPS <i>item</i>. When a session is started, each
-          item is interactive, representing that the item can be <i>picked up</i>. Clicking an item
-          represents picking that item up during a match. Each item displays the duration for which
-          the item will become non-interactive after being picked up, representing the item's
-          <i>respawn delay</i>. The number of points scored for picking up an item is the difference
-          between the item's respawn delay value and the time after which the item spawned that the
-          item was picked up. Points are multiplied by the timescale multiplier value. It is
-          possible to score negative points.
+          When a session is started, each <em>item</em> <sup>(colored square)</sup> <em>spawns</em>
+          <sup>(becomes interactive)</sup> immediately. <em>Picking up</em> <sup>(clicking)</sup> an
+          item conditionally adds points to the session score. An item's maximum points value is
+          equal to its <em>spawn delay time</em> <sup>(post-click non-interactivity interval)</sup>.
+          A point is deducted from the maximum points value for each second elapsed after the item
+          spawns that the item is not picked up. The maximum value that can be deducted is the
+          item's spawn delay time. Points are multiplied by the timescale multiplier value before
+          being added to the session score.
         </p>
 
         <p>
-          <strong>Start</strong> begins or continues a stopped session. <strong>-</strong> &
-          <strong>+</strong> manipulate the rate at which the timer elapses. <strong>Stop</strong>
-          pauses the timer. <strong>Reset</strong> ends the session, sets the session score to 0,
-          and resets the target to its original position.
-        </p>
-
-        <p>
-          Check <strong>Enable randomized target</strong> to make the randomized target visible.
-          Each target clicked is worth 1 point. Points are multiplied by the timescale multiplier
-          value.
+          <em>Start</em> begins or continues a paused session. <em>-</em> & <em>+</em> manipulate
+          the rate at which the timer elapses. <em>Pause</em> pauses the timer. <em>End</em> ends
+          the session, sets the session score to 0, and resets the target to its original position.
+          Check <em>Enable randomized target</em> to display an interactive target that is assigned
+          random positions and dimensions after each click. Targets clicked are worth 1 point,
+          multiplied by the timescale multiplier value.
         </p>
       </div>
     </div>
@@ -261,7 +305,7 @@
       createLogEntry(content, color) {
         const paragraphElement = document.createElement("p");
         paragraphElement.textContent = `${this.timer.formatTime()} - ${content}`;
-        paragraphElement.classList.add(color);
+        paragraphElement.classList.add(color, "entry");
         this.elements.logs.prepend(paragraphElement);
       }
 
@@ -281,8 +325,8 @@
         this.elements = {
           clock: document.getElementById("timerClock"),
           start: document.getElementById("timerStart"),
-          stop: document.getElementById("timerStop"),
-          reset: document.getElementById("timerReset"),
+          pause: document.getElementById("timerPause"),
+          end: document.getElementById("timerEnd"),
           multiplier: document.getElementById("timerMultiplier"),
           multiplierDecrease: document.getElementById("timerMultiplierDecrease"),
           multiplierIncrease: document.getElementById("timerMultiplierIncrease"),
@@ -294,8 +338,8 @@
 
         // Event listeners
         this.elements.start.addEventListener("click", this.startElementClick);
-        this.elements.stop.addEventListener("click", this.stopElementClick);
-        this.elements.reset.addEventListener("click", this.resetElementClick);
+        this.elements.pause.addEventListener("click", this.pauseElementClick);
+        this.elements.end.addEventListener("click", this.endElementClick);
         this.elements.multiplierDecrease.addEventListener("click", this.multiplierDecreaseElementClick);
         this.elements.multiplierIncrease.addEventListener("click", this.multiplierIncreaseElementClick);
       }
@@ -367,15 +411,15 @@
         }
       }
 
-      /** Stop the session. */
-      stopElementClick = () => {
+      /** Pause the session. */
+      pauseElementClick = () => {
         if (this.interval) {
           this.interval = false;
         }
       }
 
-      /** Reset the session. */
-      resetElementClick = () => {
+      /** End the session. */
+      endElementClick = () => {
         if (this.interval) {
           this.interval = false;
         }
@@ -427,7 +471,7 @@
         this.session = 0;
 
         // Event listeners
-        this.timer.elements.reset.addEventListener("click", () => this.session = 0);
+        this.timer.elements.end.addEventListener("click", () => this.session = 0);
       }
 
       /** An integer used to track the greatest session score. */
@@ -500,8 +544,8 @@
         // Event listeners
         this.elements.target.addEventListener("click", this.targetElementClick);
         this.elements.targetToggle.addEventListener("click", this.targetToggleElementClick);
-        this.timer.elements.reset.addEventListener("click", this.resetTargetElementPosition);
-        this.timer.elements.reset.addEventListener("click", this.resetTargetElementDimensions);
+        this.timer.elements.end.addEventListener("click", this.resetTargetElementPosition);
+        this.timer.elements.end.addEventListener("click", this.resetTargetElementDimensions);
       }
 
       /** The left position, in pixels, of the target DOM element */
@@ -654,7 +698,7 @@
         ];
 
         // Event listeners
-        this.timer.elements.reset.addEventListener("click", this.resetElementClick);
+        this.timer.elements.end.addEventListener("click", this.resetElementClick);
       }
 
       /**
@@ -695,22 +739,39 @@
         if (this.timer.interval) {
           // Find the item in `this.items` using the event target element's ID
           const item = this.items.find((item) => item.domElementId === event.target.getAttribute("id"));
-          const difference = this.timer.seconds - item.spawnTimeSeconds;
+          const spawnTimeAtClick = this.timer.seconds;
+          const difference = spawnTimeAtClick - item.spawnTimeSeconds;
 
           // The item element is interactive
           if (difference >= 0) {
-            // The time, in seconds, at which the item will be interactive
-            item.spawnTimeSeconds = this.timer.seconds + item.spawnIntervalSeconds;
-            this.score.addPointsToSessionScore(item.spawnIntervalSeconds - difference);
+            // The time, in seconds relative to the session timer, at which the item will next be interactive
+            item.spawnTimeSeconds = spawnTimeAtClick + item.spawnIntervalSeconds;
+            // Subtract a maximum of `item.spawnIntervalSeconds` points from the item points value for delayed clicks
+            const points = item.spawnIntervalSeconds - Math.min(difference, item.spawnIntervalSeconds);
+            let color;
+
+            if (difference === 0) {
+              color = "color-blue";
+            } else if (difference <= 3) {
+              color = "color-green";
+            } else if (difference <= 5) {
+              color = "color-yellow";
+            } else {
+              color = "color-red";
+            }
+
+            this.score.addPointsToSessionScore(points);
             this.logger.createLogEntry(
-              `${item.presentationName} clicked ${difference} seconds after spawn`,
-              item.logTextColorClass
+              `
+                ${item.presentationName}: spawned at ${timer.formatTime(spawnTimeAtClick)}, ${points} points,
+                ${difference} second click delay
+              `,
+              color
             );
           // The item element is not interactive
           } else {
             this.logger.createLogEntry(
-              `${item.presentationName} pick-up attempted ${Math.abs(difference)} seconds before spawn`,
-              "color-grey"
+              `${item.presentationName} clicked ${Math.abs(difference)} seconds early`, "color-grey"
             );
           }
         }
