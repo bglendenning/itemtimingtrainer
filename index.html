@@ -11,6 +11,15 @@
     <link rel="icon" href="data:,">
 
     <style>
+      :root {
+        --color-yellow: #f5bc6c;
+        --color-green: #5f8258;
+        --color-red: #c95b51;
+        --color-blue: #5a70a0;
+        --color-white: #fff7eb;
+        --color-grey: #808080;
+      }
+
       body {
         background-color: #010101;
         color: #fff7eb;
@@ -47,31 +56,31 @@
         font-size: 1em;
       }
 
-      #logClear {
+      #clearLogs {
         margin-top: 20px;
       }
 
-      #logText {
+      #logs {
         height: 300px;
         margin: 20px auto 0 auto;
         overflow: auto;
       }
 
-      #targetToggle {
+      #targetForm {
         margin-top: 20px;
         text-align: center;
       }
 
-      #targetObject {
+      #target {
         background-color: #5f8258;
         cursor: pointer;
         position: absolute;
         z-index: 1;
       }
 
-      #timer div {
+      #timer {
         font-size: 50px;
-        padding: 0 5px 0 5px;
+        padding: 0 0 10px 0;
       }
 
       #items {
@@ -84,54 +93,58 @@
         text-align: center;
       }
 
-      .clear {
-        clear: both;
+      .color-yellow {
+        color: var(--color-yellow);
       }
 
-      .fg-yellow {
-        color: #f5bc6c;
-      }
-      .fg-green {
-        color: #5f8258;
-      }
-      .fg-red {
-        color: #c95b51;
-      }
-      .fg-blue {
-        color: #5a70a0;
-      }
-      .fg-white {
-        color: #fff7eb;
-      }
-      .fg-grey {
-        color: #808080;
+      .color-green {
+        color: var(--color-green);
       }
 
-      .bg-yellow {
-        background-color: #f5bc6c;
-      }
-      .bg-green {
-        background-color: #5f8258;
-      }
-      .bg-red {
-        background-color: #c95b51;
-      }
-      .bg-blue {
-        background-color: #5a70a0;
-      }
-      .bg-white {
-        background-color: #fff7eb;
-      }
-      .bg-grey {
-        background-color: #808080;
+      .color-red {
+        color: var(--color-red);
       }
 
+      .color-blue {
+        color: var(--color-blue);
+      }
+
+      .color-white {
+        color: var(--color-white);
+      }
+
+      .color-grey {
+        color: var(--color-grey);
+      }
+
+      .background-color-yellow {
+        background-color: var(--color-yellow);
+      }
+
+      .background-color-green {
+        background-color: var(--color-green);
+      }
+
+      .background-color-red {
+        background-color: var(--color-red);
+      }
+
+      .background-color-blue {
+        background-color: var(--color-blue);
+      }
+
+      .background-color-white {
+        background-color: var(--color-white);
+      }
+
+      .background-color-grey {
+        background-color: var(--color-grey);
+      }
     </style>
-
   </head>
 
   <body>
-    <div id="targetObject"></div>
+    <div id="target"></div>
     <div id="timer">
       <div id="timerAdmin">
         <a href="javascript:void(0)" id="timerStart">start</a>
@@ -140,474 +153,480 @@
         <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
         <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
       </div>
-      <div class="clear"></div>
+
       <div id="timerDisplay">
         <span id="timerClock">00:00</span>
         <span id="timerMultiplier">1x</span>
       </div>
     </div>
+
     <div id="items"></div>
-    <div class="clear"></div>
-    <div id="targetToggle">
-      <label><input type="checkbox" id="targetFormCheck"> Enable randomized target.</label>
+
+    <div id="targetForm">
+      <label><input type="checkbox" id="targetToggle"> Enable randomized target.</label>
     </div>
+
     <div id="log">
-      <div id="scoreHigh">high score: 0000000000</div>
-      <div id="scoreSession">score: 0000000000</div>
-      <div id="logText">
-        <h1>Instructions</h1>
-        <p>Use start, stop, and reset to start, stop, and reset the trainer. Use - and + to manipulate the time speed multiplier.</p>
-        <p>Click the large colored squares to simulate picking up items. Each item pick up is worth its respawn time in points multiplied by the current time speed multiplier value.</p>
-        <p>Click the small green square to earn points while waiting for items to respawn. Each green square clicked is worth 1 point multiplied by the current time speed multiplier value.</p>
+      <div>High Score: <span id="scoreHigh">0000000000</span></div>
+
+      <div>Session Score: <span id="scoreSession">0000000000</span></div>
+
+      <div id="logs">
+        <p>
+          Click <strong>Start</strong> to start the timer. While the timer is active, click the
+          colored squares to earn points. Each square displays a number indicating how many seconds
+          you must wait to register a new click for that item. A registered click is worth the
+          square's indicated value multiplied by the timescale. <strong>-</strong> &
+          <strong>+</strong> can be used to manipulate the rate at which the timer accrues. Click
+          <strong>Stop</strong> to stop the timer, and <strong>Reset</strong> to stop the timer, set
+          the session score to 0, and set the target position to the top-left corner of the browser
+          window.
+        </p>
+
+        <p>
+          Check <strong>Enable randomized target</strong> to make the target visible. Each target
+          clicked is worth 1 point multiplied by the timescale.
+        </p>
       </div>
+
       <div>
-        <a id="logClear" href="javascript:void(0)">clear log</a>
+        <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
       </div>
     </div>
 
     <script type="text/javascript">
       function pad(value, length) {
-          let valueString = value.toString();
-          while (valueString.length < length) {
-              valueString = "0" + valueString;
-          }
-          return valueString;
-      }
+        let valueString = value.toString();
 
-      const fgColors = {
-        yellow: "fg-yellow",
-        green: "fg-green",
-        red: "fg-red",
-        blue: "fg-blue",
-        white: "fg-white",
-        grey: "fg-grey"
-      };
-
-      const bgColors = {
-        yellow: "bg-yellow",
-        green: "bg-green",
-        red: "bg-red",
-        blue: "bg-blue",
-        white: "bg-white",
-        grey: "bg-grey"
-      };
-
-      class Config {
-        getConfig = (key) => {
-          return this.setConfig(config)[key];
+        while (valueString.length < length) {
+          valueString = "0" + valueString;
         }
 
-        setConfig = (config) => {
-          return {
-            logger: {
-              elements: {
-                text: "logText",
-                clear: "logClear"
-              }
-            },
-            target: {
-              dimensions: {
-                width: 25,
-                height: 25
-              },
-              positions: {
-                left: 50,
-                top: 50
-              },
-              scoreValue: 1,
-              elements: {
-                target: document.getElementById("targetObject"),
-                checkbox: document.getElementById("targetFormCheck")
-              }
-            },
-            score: {
-              session: 0,
-              high: 0,
-              length: 10,
-              multiplier: 1,
-              elements: {
-                session: document.getElementById("scoreSession"),
-                high: document.getElementById("scoreHigh"),
-                multiplier: document.getElementById("scoreMultiplier")
-              }
-            },
-            timer: {
-              seconds: 0,
-              interval: null,
-              active: false,
-              multiplier: 1,
-              elements: {
-                clock: document.getElementById("timerClock"),
-                start: document.getElementById("timerStart"),
-                stop: document.getElementById("timerStop"),
-                reset: document.getElementById("timerReset"),
-                multiplier: document.getElementById("timerMultiplier"),
-                decrease: document.getElementById("timerMultiplierDecrease"),
-                increase: document.getElementById("timerMultiplierIncrease")
-              }
-            },
-            item: {
-              items: [
-                {
-                  name: "red armor",
-                  id: "itemArmorRed",
-                  interval: 25,
-                  spawnTime: 0,
-                  bg: "red",
-                  fg: "red"
-                },
-                {
-                  name: "yellow armor",
-                  id: "itemArmorYellow",
-                  interval: 25,
-                  spawnTime: 0,
-                  bg: "yellow",
-                  fg: "yellow"
-                },
-                {
-                  name: "mega health",
-                  id: "itemHealthMega",
-                  interval: 35,
-                  spawnTime: 0,
-                  bg: "blue",
-                  fg: "blue"
-                }
-              ]
-            }
-          }
-        }
+        return valueString;
       }
-
-      let config = new Config({});
 
       class Logger {
         constructor() {
-          this.setConfig();
-          // dom
-          this.textEl = document.getElementById(this.config.elements.text);
-          this.clearEl = document.getElementById(this.config.elements.clear);
-          // listeners
-          this.clearEl.addEventListener("click", this.clear);
+          // DOM elements
+          this.elements = {
+            logs: document.getElementById("logs"),
+            clear: document.getElementById("clearLogs"),
+          };
+
+          // Event listeners
+          this.elements.clear.addEventListener("click", this.clearElementClick);
         }
 
-        setConfig = () => {
-          this.config = config.getConfig("logger");
+        createLogEntry(content, color) {
+          const paragraphElement = document.createElement("p");
+          paragraphElement.textContent = `${timer.formatTime()} - ${content}`;
+          paragraphElement.classList.add(color);
+          this.elements.logs.prepend(paragraphElement);
         }
 
-        write = (content, color) => {
-          const newLog = this.createLog(content, color);
-          this.textEl.prepend(newLog);
-        }
-
-        clear = () => {
-          this.textEl.textContent = "";
-        }
-
-        createLog = (content, color) => {
-          let newEl = document.createElement("p");
-          newEl.textContent = `${timer.time()} - ${content}`;
-          newEl.classList.add(fgColors[color]);
-          return newEl;
+        clearElementClick = () => {
+          this.elements.logs.textContent = "";
         }
       }
-
-      let logger = new Logger();
 
       class Score {
         constructor() {
-          this.init();
-          // outside of init to preserve high score
-          this.high = this.config.high;
-          this.highEl.textContent = `${pad(this.config.high, this.length)}`;
+          // DOM elements
+          this.elements = {
+            session: document.getElementById("scoreSession"),
+            high: document.getElementById("scoreHigh"),
+            multiplier: document.getElementById("scoreMultiplier")
+          };
+
+          // Event listeners
+          timer.elements.reset.addEventListener("click", () => this.session = 0);
+
+          // Default values
+          this.high = 0;
+          this.session = 0;
+          this.length = 10;
+
+          this.updateHighElementText();
+          this.updateSessionElementText();
         }
 
-        init = () => {
-          this.setConfig();
-          this.setVars();
-          this.setDOM();
+        #high = 0;
+
+        get high() {
+          return this.#high;
         }
 
-        setConfig = () => {
-          this.config = config.getConfig("score");
+        set high(score) {
+          this.#high = score;
         }
 
-        setVars = () => {
-          this.session = this.config.session;
-          this.length = this.config.length;
-          this.multiplier = this.config.multiplier;
+        updateHighElementText() {
+          this.elements.session.textContent = pad(this.session, this.length);
         }
 
-        setDOM = () => {
-          this.sessionEl = this.config.elements.session;
-          this.sessionEl.textContent = `${pad(this.config.session, this.length)}`;
-          this.highEl = this.config.elements.high;
-          this.multiplierEl = this.config.elements.multiplier;
+        #session = 0;
+
+        get session() {
+          return this.#session;
         }
 
-        add = (value) => {
-          this.session = this.session + Math.floor(value * timer.multiplier);
-          this.sessionEl.textContent = `${pad(this.session, this.length)}`;
-          if (this.session > this.high) {
-            this.high = this.session;
-            this.highEl.textContent = `${pad(this.session, this.length)}`;
+        set session(points) {
+          this.#session = points
+          this.elements.session.textContent = pad(this.session, this.length);
+
+          if (this.#session > this.high) {
+            this.high = this.#session;
+            this.elements.high.textContent = pad(this.high, this.length);
           }
         }
 
-        reset = () => {
-          
+        addPointsToSession(points) {
+          this.session += points * timer.multiplier
+        }
+
+        updateSessionElementText() {
+          this.elements.session.textContent = pad(this.session, this.length);
         }
       }
-
-      let score = new Score();
 
       class Target {
         constructor() {
-          this.init();
+          // DOM elements
+          this.elements = {
+            target: document.getElementById("target"),
+            targetToggle: document.getElementById("targetToggle"),
+          };
+          this.elements.target.style.left = `${this.targetElementLeft}px`;
+          this.elements.target.style.top = `${this.targetElementTop}px`;
+          this.elements.target.style.width = `${this.targetElementWidth}px`;
+          this.elements.target.style.height = `${this.targetElementHeight}px`;
+          this.targetElementVisibility = this.elements.targetToggle;
+          this.elements.target.style.visibility = this.targetElementVisibility;
+
+          // Event listeners
+          this.elements.target.addEventListener("click", this.targetElementClick);
+          this.elements.targetToggle.addEventListener("click", this.targetToggleElementClick);
+          timer.elements.reset.addEventListener("click", this.resetTargetElementPosition);
+          timer.elements.reset.addEventListener("click", this.resetTargetElementDimensions);
         }
 
-        init = () => {
-          this.setConfig();
-          this.setVars();
-          this.setDOM();
-          this.setListeners();
+        #targetElementLeft = 50; // Pixels
+
+        get targetElementLeft() {
+          return this.#targetElementLeft;
         }
 
-        setConfig = () => {
-          this.config = config.getConfig("target")
+        set targetElementLeft(left) {
+          this.#targetElementLeft = left;
         }
 
-        setDOM = () => {
-          this.targetEl = this.config.elements.target;
-          this.resetTarget();
-          this.checkboxEl = this.config.elements.checkbox;
-          this.setTargetVisibility();
+        #targetElementTop = 50; // Pixels
+
+        get targetElementTop() {
+          return this.#targetElementTop;
         }
 
-        setVars = () => {
-          this.width = this.config.dimensions.width;
-          this.height = this.config.dimensions.height;
-          this.left = this.config.positions.left;
-          this.top = this.config.positions.top;
-          this.scoreValue = this.config.scoreValue;
+        set targetElementTop(top) {
+          this.#targetElementTop = top;
         }
 
-        setListeners = () => {
-          this.targetEl.addEventListener("click", this.click);
-          this.checkboxEl.addEventListener("click", this.setTargetVisibility);
+        #targetElementWidth = 25; // Pixels
+
+        get targetElementWidth() {
+          return this.#targetElementWidth;
         }
 
-        reset = () => {
-          this.init()
+        set targetElementWidth(width) {
+          this.#targetElementWidth = width;
         }
 
-        setTargetPosition = (left, top) => {
-          this.targetEl.style.left = `${left}px`;
-          this.targetEl.style.top = `${top}px`;
+        #targetElementHeight = 25; // Pixels
+
+        get targetElementHeight() {
+          return this.#targetElementHeight;
         }
 
-        resetTarget = () => {
-          this.targetEl.style.width = `${this.config.dimensions.width}px`;
-          this.targetEl.style.height = `${this.config.dimensions.height}px`;
-          this.setTargetPosition(this.config.positions.left, this.config.positions.top);
+        set targetElementHeight(height) {
+          this.#targetElementHeight = height;
         }
 
-        setRandomPosition = () => {
-          const maxLeft = window.innerWidth - this.width - 50;
-          const maxTop = window.innerHeight - this.height - 50;
-          const left = Math.floor((Math.random() * maxLeft) + 50);
-          const top = Math.floor((Math.random() * maxTop) + 50);
-          this.setTargetPosition(left, top);
+        #targetElementVisibility = "hidden"
+
+        get targetElementVisibility() {
+          return this.#targetElementVisibility;
         }
 
-        click = (event) => {
+        set targetElementVisibility(element) {
+          this.#targetElementVisibility = element.checked ? "visible" : "hidden";
+        }
+
+        updateTargetElement() {
+          this.elements.target.style.left = `${this.targetElementLeft}px`;
+          this.elements.target.style.top = `${this.targetElementTop}px`;
+          this.elements.target.style.width = `${this.targetElementWidth}px`;
+          this.elements.target.style.height = `${this.targetElementHeight}px`;
+          this.elements.target.style.visibility = this.targetElementVisibility;
+        }
+
+        resetTargetElementPosition = () => {
+          this.targetElementLeft = 50;
+          this.targetElementTop = 50;
+          this.updateTargetElement();
+        }
+
+        resetTargetElementDimensions = () => {
+          this.targetElementWidth = 25;
+          this.targetElementHeight = 25;
+          this.updateTargetElement();
+        }
+
+        setRandomTargetElementPosition() {
+          const maxLeft = window.innerWidth - this.targetElementWidth - 50;
+          const maxTop = window.innerHeight - this.targetElementHeight - 50;
+          this.targetElementLeft = Math.floor((Math.random() * maxLeft) + 50);
+          this.targetElementTop = Math.floor((Math.random() * maxTop) + 50);
+          this.updateTargetElement();
+        }
+
+        targetElementClick = (event) => {
           event.stopPropagation();
-          if (timer.active && this.checkboxEl.checked) {
-            this.setRandomPosition();
-            score.add(this.scoreValue);
+
+          if (timer.interval && this.elements.targetToggle.checked) {
+            this.setRandomTargetElementPosition();
+            score.addPointsToSession(1);
           }
         }
 
-        setTargetVisibility = () => {
-          this.targetEl.style.visibility = this.checkboxEl.checked ?"visible" : "hidden";
+        targetToggleElementClick = (event) => {
+          this.targetElementVisibility = event.target;
+          this.updateTargetElement();
         }
       }
-
-      let target = new Target();
 
       class Timer {
-        constructor(config) {
-          this.init();
+        constructor() {
+          // DOM elements
+          this.elements = {
+            clock: document.getElementById("timerClock"),
+            start: document.getElementById("timerStart"),
+            stop: document.getElementById("timerStop"),
+            reset: document.getElementById("timerReset"),
+            multiplier: document.getElementById("timerMultiplier"),
+            multiplierDecrease: document.getElementById("timerMultiplierDecrease"),
+            multiplierIncrease: document.getElementById("timerMultiplierIncrease"),
+          };
+          this.updateClockElementText();
+
+          // Event listeners
+          this.elements.start.addEventListener("click", this.startElementClick);
+          this.elements.stop.addEventListener("click", this.stopElementClick);
+          this.elements.reset.addEventListener("click", this.resetElementClick);
+          this.elements.multiplierDecrease.addEventListener("click", this.multiplierDecreaseElementClick);
+          this.elements.multiplierIncrease.addEventListener("click", this.multiplierIncreaseElementClick);
         }
 
-        init = () => {
-          this.setConfig();
-          this.setVars();
-          this.setDOM();
-          this.setListeners();
+        #seconds = 0;
+
+        get seconds() {
+          return this.#seconds;
         }
 
-        setConfig = () => {
-          this.config = config.getConfig("timer")
+        set seconds(seconds) {
+          this.#seconds = seconds;
         }
 
-        setVars = () => {
-          this.seconds = this.config.seconds;
-          this.interval = this.config.interval;
-          this.active = this.config.active;
-          this.multiplier = this.config.multiplier;
-        }
+        #interval = null;
 
-        setDOM = () => {
-          this.clockEl = this.config.elements.clock;
-          this.clockEl.textContent = this.time();
-          this.startEl = this.config.elements.start;
-          this.stopEl = this.config.elements.stop;
-          this.resetEl = this.config.elements.reset;
-          this.decreaseEl = this.config.elements.decrease;
-          this.increaseEl = this.config.elements.increase;
-          this.multiplierEl = this.config.elements.multiplier;
-          this.setMultiplierText();
-        }
+        get interval() {
+          return this.#interval;
+        }        
 
-        setListeners = () => {
-          this.startEl.addEventListener("click", this.start);
-          this.stopEl.addEventListener("click", this.stop);
-          this.resetEl.addEventListener("click", this.reset);
-          this.decreaseEl.addEventListener("click", this.decreaseMultiplier);
-          this.increaseEl.addEventListener("click", this.increaseMultiplier);
-        }
+        set interval(interval) {
+          clearInterval(this.interval);
 
-        time = () => {
-          return `${pad(parseInt(this.seconds / 60), 2)}:${pad(this.seconds % 60, 2)}`;
-        }
-
-        start = () => {
-          if (!this.active) {
-            logger.write("timer started", "white");
-            this.interval = setInterval(this.set, (1000 / this.multiplier));
-            this.active = true;
+          if (interval) {
+            this.#interval = setInterval(() => {
+              this.seconds += 1;
+              this.updateClockElementText();
+            }, (1000 / this.multiplier));
+          } else {
+            this.#interval = null;
           }
         }
 
-        stop = () => {
-          if (this.active) {
-            logger.write("timer stopped", "white");
-            clearInterval(this.interval);
-            this.active = false;
+        #multiplier = 1;
+
+        get multiplier() {
+          return this.#multiplier;
+        }
+
+        set multiplier(multiplier) {
+          if (multiplier > 0) {
+            this.#multiplier = multiplier;
           }
         }
 
-        set = () => {
-          ++this.seconds;
-          this.clockEl.textContent = this.time();
+        updateMultiplierElementText() {
+          this.elements.multiplier.textContent = `${this.multiplier}x`;
         }
 
-        reset = () => {
-          if (this.active) {
-            this.stop();
+        formatTime() {
+          const minutes = pad(Math.floor(this.seconds / 60), 2);
+          let seconds;
+
+          if (this.seconds >= 60) {
+            seconds = pad(this.seconds % 60, 2);
+          } else {
+            seconds = pad(this.seconds, 2);
           }
-          this.init()
-          score.init();
-          target.resetTarget();
-          item.init();
-          logger.write("timer and score reset to default values", "white");
+
+          return `${minutes}:${seconds}`;
         }
 
-        setMultiplierText = () => {
-          this.multiplierEl.textContent = `${this.multiplier}x`;
+        updateClockElementText() {
+          this.elements.clock.textContent = this.formatTime();
         }
 
-        increaseMultiplier = () => {
-          if (this.multiplier >= 1) {
-            ++this.multiplier;
-          } else if (this.multiplier > 0) {
-            this.multiplier = this.multiplier + .25;
+        startElementClick = () => {
+          if (!this.interval) {
+            this.interval = true;
           }
-          if (this.active) {
-            clearInterval(this.interval);
-            this.interval = setInterval(this.set, (1000 / this.multiplier));
-          }
-          this.setMultiplierText();
-          logger.write(`timer multiplier set to ${this.multiplier}x`, "white");
         }
 
-        decreaseMultiplier = () => {
-          if (this.multiplier > 1) {
-            --this.multiplier;
-          } else if (this.multiplier > .25) {
-            this.multiplier = this.multiplier - .25;
+        stopElementClick = () => {
+          if (this.interval) {
+            this.interval = false;
           }
-          if (this.active) {
-            clearInterval(this.interval);
-            this.interval = setInterval(this.set, (1000 / this.multiplier));
+        }
+
+        resetElementClick = () => {
+          if (this.interval) {
+            this.interval = false;
           }
-          this.setMultiplierText();
-          logger.write(`timer multiplier set to ${this.multiplier}x`, "white");
+
+          this.seconds = 0;
+          this.updateClockElementText();
+        }
+
+        multiplierDecreaseElementClick = () => {
+          this.multiplier -= 1;
+          this.updateMultiplierElementText();
+
+          if (this.interval) {
+            this.interval = true;
+          }
+        }
+
+        multiplierIncreaseElementClick = () => {
+          this.multiplier += 1
+          this.updateMultiplierElementText();
+
+          if (this.interval) {
+            this.interval = true;
+          }
         }
       }
 
-      let timer = new Timer();
-
-      class Item {
+      class Items {
         constructor() {
-          this.init();
-        }
+          this.items = [
+            {
+              presentationName: "Red Armor",
+              domElementId: "itemArmorRed",
+              spawnIntervalSeconds: 25,
+              spawnTimeSeconds: 0,
+              backgroundColorClass: "background-color-red",
+              logTextColor: "color-red"
+            },
+            this.items = {
+              presentationName: "Yellow Armor",
+              domElementId: "itemArmorYellow",
+              spawnIntervalSeconds: 25,
+              spawnTimeSeconds: 0,
+              backgroundColorClass: "background-color-yellow",
+              logTextColor: "color-yellow"
+            },
+            this.items = {
+              presentationName: "Megahealth",
+              domElementId: "itemHealthMega",
+              spawnIntervalSeconds: 35,
+              spawnTimeSeconds: 0,
+              backgroundColorClass: "background-color-blue",
+              logTextColor: "color-blue"
+            },
+          ];
 
-        init = () => {
-          this.setConfig();
-          this.setVars();
-          this.setDOM();
-          this.createItems();
-        }
-
-        setConfig = () => {
-          this.config = config.getConfig("item");
-        }
-
-        setVars = () => {
-          this.items = this.config.items;
-        }
-
-        setDOM = () => {
-          this.itemsEl = document.getElementById("items");
-          this.createItems();
-        }
-
-        createItems = () => {
-          this.itemsEl.innerHTML = "";
-          for (let item in this.items) {
-            let newEl = document.createElement("div");
-            newEl.setAttribute("id", this.items[item].id);
-            newEl.setAttribute("data-id", item);
-            newEl.classList.add("item", bgColors[this.items[item].bg]);
-            newEl.addEventListener("click", this.click);
-            newEl.textContent = `${this.items[item].interval}`;
-            this.itemsEl.append(newEl);
+          // DOM elements
+          this.elements = {
+            items: document.getElementById("items"),
           }
+
+          // Create DOM elements from `this.items`
+          this.items.forEach((item) => {
+            const element = document.createElement("div");
+            element.setAttribute("id", item.domElementId);
+            element.setAttribute("data-spawn-interval-seconds", item.spawnIntervalSeconds);
+            element.classList.add("item", item.backgroundColorClass);
+            element.textContent = item.spawnIntervalSeconds;
+            this.elements.items.append(element);
+          });
+
+          // Event listeners
+          timer.elements.reset.addEventListener("click", this.resetElementClick);
+
+          this.items.forEach((item) => {
+            const element = document.getElementById(item.domElementId);
+            element.addEventListener("click", this.itemElementClick);
+          });
         }
 
-        click = (event) => {
-          let _item = this.items[event.target.getAttribute("data-id")];
-          let difference = timer.seconds - _item.spawnTime;
-          if (timer.active) {
+        #items = []
+
+        get items() {
+          return this.#items;
+        }
+
+        set items(items) {
+          this.#items = items;
+        }
+
+        itemElementClick = (event) => {
+          if (timer.interval) {
+            const item = this.items.find((item) => item.domElementId === event.target.getAttribute("id"));
+            const difference = timer.seconds - item.spawnTimeSeconds;
+
             if (difference >= 0) {
-              _item.spawnTime = timer.seconds + _item.interval;
-              score.add(_item.interval);
-              logger.write(`${_item.name} pickup ${difference} seconds after spawn`, _item.fg);
+              item.spawnTimeSeconds = timer.seconds + item.spawnIntervalSeconds;
+              score.addPointsToSession(item.spawnIntervalSeconds);
+              logger.createLogEntry(
+                `${item.presentationName} picked up ${difference} seconds after spawn`,
+                item.logTextColor
+              );
             } else {
-              logger.write(`${_item.name} pickup attempted ${Math.abs(difference)} seconds before spawn`, "grey");
+              logger.createLogEntry(
+                `${item.presentationName} pick-up attempted ${Math.abs(difference)} seconds before spawn`,
+                "grey"
+              );
             }
           }
         }
 
-        reset = () => {
-          this.init();
+        resetElementClick = () => {
+          const items = [...this.items];
+
+          items.forEach((item) => {
+            item.spawnTimeSeconds = 0;
+          });
+
+          this.items = items;
         }
       }
 
-      let item = new Item();
+      const logger = new Logger();
+      const timer = new Timer();
+      const score = new Score();
+      const target = new Target();
+      const items = new Items();
     </script>
-
   </body>
-
 </html>
