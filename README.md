@@ -22,7 +22,8 @@ The project is infrequently updated in fits of motivation to restructure and mod
 has shaped my approach to web development as the years pass. It isn't so much a passion project as a basically-solved
 multifaceted problem that can adapt and evolve to changing technologies. The only restrictions I've imposed are that the
 project should not rely on any frameworks or libraries for manipulating the DOM. It's essentially a naive web
-development playground. 
+development playground to practice composing code to my standards at a given point in time without deadlines, client
+demands, or compromise with team members.
 
 # Using Item Timing Trainer
 
