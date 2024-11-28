@@ -33,7 +33,7 @@ represent other games or desired scenarios.
 
 ## Items
 
-Items are [defined](index.html#L673-L698) in the `Items` class.
+Items are [defined](index.html#L674-L699) in the `Items` class.
 
 * `presentationName`: The name to present when logging item clicks.
 * `domElementId`: A valid DOM element ID for use in creating the item's DOM element.
@@ -41,12 +41,12 @@ Items are [defined](index.html#L673-L698) in the `Items` class.
 * `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will
    spawn. If defined as 0, the item can be picked up immediately upon starting a session, else the
    item will spawn `spawnTimeSeconds` after the session starts.
-* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L143-L165).
-* `logTextColorClass`: The name of one of the project's [color classes](index.html#L119-L141).
+* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L169-L191).
+* `logTextColorClass`: The name of one of the project's [color classes](index.html#L145-L167).
 
 ## Target
 
-The target defaults and point value are [defined](index.html#L521-L526) in the `Target` class.
+The target defaults and point value are [defined](index.html#L522-L527) in the `Target` class.
 
 * `target.defaults.left`: The target DOM element's default left position in pixels.
 * `target.defaults.top`: The target DOM element's default top position in pixels.
