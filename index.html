@@ -476,7 +476,7 @@
     class Target {
       defaults = {
         left: 50, // Target DOM left position in pixels
-        top: 50, // Target DOM left position in pixels
+        top: 50, // Target DOM top position in pixels
         side: 25, // Target DOM width and height dimensions in pixels
       }
       pointValue = 1;
@@ -490,10 +490,6 @@
           target: document.getElementById("target"),
           targetToggle: document.getElementById("targetToggle"),
         };
-        this.elements.target.style.left = `${this.targetElementLeft}px`;
-        this.elements.target.style.top = `${this.targetElementTop}px`;
-        this.elements.target.style.width = `${this.targetElementWidth}px`;
-        this.elements.target.style.height = `${this.targetElementHeight}px`;
 
         this.targetElementLeft = this.defaults.left;
         this.targetElementTop = this.defaults.top;
