@@ -474,6 +474,13 @@
 
     /** Manipulate DOM elements related to interacting with and presenting the target. */
     class Target {
+      defaults = {
+        left: 50, // Target DOM left position in pixels
+        top: 50, // Target DOM left position in pixels
+        side: 25, // Target DOM width and height dimensions in pixels
+      }
+      pointValue = 1;
+
       constructor(timer, score) {
         this.timer = timer;
         this.score = score;
@@ -488,10 +495,10 @@
         this.elements.target.style.width = `${this.targetElementWidth}px`;
         this.elements.target.style.height = `${this.targetElementHeight}px`;
 
-        this.targetElementLeft = 50;
-        this.targetElementTop = 50;
-        this.targetElementWidth = 25;
-        this.targetElementHeight = 25;
+        this.targetElementLeft = this.defaults.left;
+        this.targetElementTop = this.defaults.top;
+        this.targetElementWidth = this.defaults.side;
+        this.targetElementHeight = this.defaults.side;
         this.targetElementVisibility = this.elements.targetToggle;
 
         // Event listeners
@@ -570,24 +577,24 @@
       }
 
       resetTargetElementPosition = () => {
-        this.targetElementLeft = 50;
-        this.targetElementTop = 50;
+        this.targetElementLeft = this.defaults.left;
+        this.targetElementTop = this.defaults.top;
       }
 
       resetTargetElementDimensions = () => {
-        this.targetElementWidth = 25;
-        this.targetElementHeight = 25;
+        this.targetElementWidth = this.defaults.side;
+        this.targetElementHeight = this.defaults.side;
       }
 
       setRandomTargetElementPositions() {
-        const maxLeft = window.innerWidth - this.targetElementWidth - 50;
-        const maxTop = window.innerHeight - this.targetElementHeight - 50;
-        this.targetElementLeft = Math.floor((Math.random() * maxLeft) + 50);
-        this.targetElementTop = Math.floor((Math.random() * maxTop) + 50);
+        const maxLeft = window.innerWidth - this.targetElementWidth * 2;
+        const maxTop = window.innerHeight - this.targetElementHeight * 2;
+        this.targetElementLeft = Math.floor((Math.random() * maxLeft) + this.targetElementWidth);
+        this.targetElementTop = Math.floor((Math.random() * maxTop) + this.targetElementHeight);
       }
 
       setRandomTargetElementDimensions() {
-        const value = Math.floor(Math.random() * 50 + 15);
+        const value = Math.floor((Math.random() * this.defaults.side) + this.defaults.side * 1.5);
         this.targetElementWidth = value;
         this.targetElementHeight = value;
       }
@@ -598,9 +605,9 @@
        */
       targetElementClick = () => {
         if (this.timer.interval && this.elements.targetToggle.checked) {
-          this.setRandomTargetElementPositions();
           this.setRandomTargetElementDimensions();
-          this.score.addPointsToSessionScore(1);
+          this.setRandomTargetElementPositions();
+          this.score.addPointsToSessionScore(this.pointValue);
         }
       }
 
@@ -630,7 +637,7 @@
             spawnIntervalSeconds: 25,
             spawnTimeSeconds: 0,
             backgroundColorClass: "background-color-red",
-            logTextColor: "color-red"
+            logTextColorClass: "color-red"
           },
           {
             presentationName: "Yellow Armor",
@@ -638,7 +645,7 @@
             spawnIntervalSeconds: 25,
             spawnTimeSeconds: 0,
             backgroundColorClass: "background-color-yellow",
-            logTextColor: "color-yellow"
+            logTextColorClass: "color-yellow"
           },
           {
             presentationName: "Megahealth",
@@ -646,7 +653,7 @@
             spawnIntervalSeconds: 35,
             spawnTimeSeconds: 0,
             backgroundColorClass: "background-color-blue",
-            logTextColor: "color-blue"
+            logTextColorClass: "color-blue"
           },
         ];
 
@@ -701,7 +708,7 @@
             this.score.addPointsToSessionScore(item.spawnIntervalSeconds - difference);
             this.logger.createLogEntry(
               `${item.presentationName} clicked ${difference} seconds after spawn`,
-              item.logTextColor
+              item.logTextColorClass
             );
           // The item element is not interactive
           } else {

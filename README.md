@@ -8,27 +8,31 @@ spawn after picking it up can be confusing for unaccustomed players.
 As an example, Quake Live duel maps feature two common forms of power-ups: megahealth and colored armors. The standard
 spawn time for colored armors is 25 seconds, and, for megahealth, 35 seconds. Matches can be intensely dynamic, with
 many context switches and distractions, which can lead to difficulty for players to mindfully perform the calculations
-necessary to compute a picked up item's next spawn time. Additional difficulty is presented when the player must
-calculate a spawn time that extends into the next minute of the match, because determining the remainder over _60_ of,
-for instance, _48 + 35_, isn't commonly an intuitive process for those familiar with decimal calculations.
+necessary to compute a picked-up item's next spawn time. Additional difficulty is presented when the player must
+calculate a spawn time that extends into the next minute of the match, because determining the remainder over _60_ of
+_48 + 35_ isn't commonly an intuitive process for those familiar with decimal calculations.
 
-Item Timing Trainer was designed to work similarly to flash card practice. Through repetitive practice, the player will
+Item Timing Trainer is designed to work similarly to flash card practice. Through repetitive practice, the player will
 develop familiarity with the calculations, and over time will come to recognize patterns and relationships in the
 process, and memorize results, such that, when in game, the player will no longer experience the stress of calculating
 spawn times, and can focus on building the habits of being mindful of spawn times when items are picked up, and of
 maintaining multiple spawn times in memory over time.
 
-The project is no longer actively developed. It is left for the posterity of those who may find themselves interested in
-mastering this esoteric skill.
+The project is infrequently updated in fits of motivation to restructure and modernize it according to how my experience
+has shaped my approach to web development as the years pass. It isn't so much a passion project as a basically-solved
+multifaceted problem that can adapt and evolve to changing technologies. The only restrictions I've imposed are that the
+project should not rely on any frameworks or libraries for manipulating the DOM. It's essentially a naive web
+development playground. 
 
 # Using Item Timing Trainer
 
 Clone the repository and open `index.html` in a web browser. In addition to the item timing aspect of the project, a
-simple target practice activity is provided. The intent is to give the player an activity to perform while practicing
-timing in order to simulate&mdash;to a much smaller degree&mdash;the distracting multitasking required by arena FPS games.
+simple target practice activity is provided. The intent is to give the player a task to perform while practicing timing
+to simulate a small amount of the distracting multitasking required by arena FPS games.
 
 The timescale can be adjusted in increments of _1_. This will multiply the rate at which the timer seconds accrue,
-allowing players to introduce greater challenge as they adapt to the tasks. Score is multiplied by the timescale.
+allowing players to introduce greater challenge as they adapt to the process. Activity point values are multiplied by
+the timescale.
 
 ## Customization
 
@@ -37,31 +41,24 @@ customized.
 
 ### Items
 
-Items are [represented as objects](index.html#L249-L277) in
-the return value of [Config.setConfig](index.html#L200).
-Items can be added, removed, or edited. The data structure of an item follows:
+Items are [defined](index.html#L632-L657) in the `Items` class.
 
-* `name`: Used for logging training activity.
-* `id`: The DOM element ID, used for event handling and DOM manipulation.
-* `interval`: The interval, in seconds, after picking up the item that it will spawn.
-* `spawnTime`: The time, in seconds, at which the item will next spawn.
-* `bg`: The background color of the item's DOM element. Colors are mapped to CSS classes in
-  [bgColors](index.html#L186-L193).
-* `fg`: The color of the item's related log entries. Colors are mapped to CSS classes in
-  [fgColors](index.html#L177-L184)
+#### Item Properties
+
+* `presentationName`: The name to present when logging item clicks.
+* `domElementId`: A valid DOM element ID for use in creating the item's DOM element.
+* `spawnIntervalSeconds`: The interval between when an item is picked up and will spawn again.
+* `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will
+   spawn. This value can be defined as greater than 0.
+* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L143-L165).
+* `logTextColorClass`: The name of one of the project's [color classes](index.html#L119-L141).
 
 ### Target
 
-The target configuration is
-[represented as an object](index.html#L208-L222) in the
-return value of [Config.setConfig](index.html#L200). The
-data structure of an item follows:
+The target defaults and point value are [defined](index.html#L477-482) in the `Target` class.
 
-* `target.dimensions.width`: The width, in pixels, of the target.
-* `target.dimensions.height`: The height, in pixels, of the target.
-* `target.positions.left`: The left position, in pixels, at which the target will initially be rendered.
-* `target.positions.top`: The top position, in pixels, at which the target will initially be rendered.
-* `target.scoreValue`: This value will be used in calculating the value to add to the session score when the target is
-  clicked.
-* `target.elements.target`: The target DOM element.
-* `target.elements.checkbox`: The enable/disable target checkbox DOM element.
+* `target.defaults.left`: The target DOM element's default left position in pixels.
+* `target.defaults.top`: The target DOM element's default top position in pixels.
+* `target.defaults.side`: The target DOM element's default width and height in pixels.
+* `target.pointValue`: The value&mdash;before timescale adjustment&mdash;to add to the session score
+   when the target is clicked.
