@@ -69,6 +69,7 @@
         background-color: var(--color-green);
         border-radius: 50%;
         cursor: pointer;
+        filter: drop-shadow(0 0 10px var(--color-white));
         position: absolute;
         z-index: 1;
       }
@@ -227,7 +228,7 @@
       <div class="text-center text-large">
         <a href="javascript:void(0)" id="timerStart">Start</a>
         <a href="javascript:void(0)" id="timerPause">Pause</a>
-        <a href="javascript:void(0)" id="timerEnd">Reset</a>
+        <a href="javascript:void(0)" id="timerEnd">End</a>
         <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
         <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
       </div>
@@ -244,16 +245,18 @@
       </div>
 
       <div id="logsHeader">
-        <div>High Score: <span id="scoreHigh"></span></div>
+        <div>High: <span id="scoreHigh"></span></div>
 
-        <div class="text-center">Session Score: <span id="scoreSession"></span></div>
+        <div class="text-center">Session: <span id="scoreSession"></span></div>
 
-        <div class="text-right">
-          <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
-        </div>
+        <div class="text-right">Avg. Click: <span id="clickSession"></span>ms</div>
       </div>
 
       <div id="content">
+        <div class="text-right">
+          <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
+        </div>
+
         <div id="logs"></div>
 
         <h1>Arena FPS Item Timing Trainer</h1>
@@ -344,7 +347,7 @@
         };
 
         this.seconds = 0;
-        this.interval = false;
+        this.interval = null;
         this.multiplier = 1;
 
         // Event listeners
@@ -371,7 +374,11 @@
         this.elements.clock.textContent = this.formatTime(this.seconds);
       }
 
-      /** A `setInterval` object or `null`. Used to track the session's elapsed seconds. */
+      /**
+        * `null` if a session has not been started or has ended, a `setInterval` object if a session
+        * is started, or `false` if a session is paused. Used to track the session state and elapsed
+        * seconds.
+        * */
       #interval;
 
       get interval() {
@@ -379,11 +386,13 @@
       }
 
       set interval(interval) {
-        if (this.interval) {
-          clearInterval(this.interval);
-        }
+        clearInterval(this.interval);
 
-        this.#interval = interval ? setInterval(() => this.seconds += 1, (1000 / this.multiplier)) : null;
+        if (interval) {
+          this.#interval = setInterval(() => this.seconds += 1, (1000 / this.multiplier));
+        } else {
+          this.#interval = interval;
+        }
       }
 
       /** An integer factor used to increase or decrease the `setInterval` `delay` parameter. */
@@ -404,6 +413,40 @@
         this.elements.multiplier.textContent = this.multiplier;
       }
 
+      #sessionTimes = [];
+
+      get sessionTimes() {
+        return this.#sessionTimes;
+      }
+
+      /**
+       * Track the session state over time by recording consecutive start and pause times. Each
+       * object contains a `start` property. An `end` property is added when the session is paused.
+       * An object with both properties represents a period of time in which the session was active.
+       */
+      set sessionTimes(value) {
+        if (Array.isArray(value)) {
+          this.#sessionTimes = value;
+        } else {
+          if (this.#sessionTimes.length === 0) {
+            // Session has been started
+            this.#sessionTimes.push({start: value});
+          } else {
+            // Find the first session time that doesn't have an end
+            const index = this.sessionTimes.findIndex((pause) => !pause.hasOwnProperty("end"));
+
+            if (index !== -1) {
+              // Since `sessionTimes[index]` doesn't have an end, the session is being paused
+              this.#sessionTimes[index].end = value;
+            } else {
+              // Since a `sessionTimes[index]` has an end, the session is being restarted
+              // Create a new session time
+              this.#sessionTimes.push({start: value});
+            }
+          }
+        }
+      }
+
       /**
        * Calculate minutes and remainder seconds of `timerSeconds`, pad both, and return a
        * formatted time string.
@@ -419,6 +462,7 @@
       startElementClick = () => {
         if (!this.interval) {
           this.interval = true;
+          this.sessionTimes = performance.now();
         }
       }
 
@@ -426,17 +470,19 @@
       pauseElementClick = () => {
         if (this.interval) {
           this.interval = false;
+          this.sessionTimes = performance.now();
         }
       }
 
       /** End the session. */
       endElementClick = () => {
         if (this.interval) {
-          this.interval = false;
+          this.interval = null;
         }
 
         this.seconds = 0;
         this.multiplier = 1;
+        this.sessionTimes = [];
       }
 
       /** Increase the interval delay by decreasing the multiplier factor. */
@@ -466,7 +512,7 @@
      */
     class Score {
       // The string length to pad scores to
-      length = 10;
+      length = 6;
 
       constructor(timer) {
         this.timer = timer;
@@ -544,6 +590,7 @@
         this.elements = {
           target: document.getElementById("target"),
           targetToggle: document.getElementById("targetToggle"),
+          clickSession: document.getElementById("clickSession"),
         };
 
         this.targetElementLeft = this.defaults.left;
@@ -551,12 +598,12 @@
         this.targetElementWidth = this.defaults.side;
         this.targetElementHeight = this.defaults.side;
         this.targetElementVisibility = this.elements.targetToggle;
+        this.updateClickSessionElement();
 
         // Event listeners
         this.elements.target.addEventListener("click", this.targetElementClick);
         this.elements.targetToggle.addEventListener("click", this.targetToggleElementClick);
-        this.timer.elements.end.addEventListener("click", this.resetTargetElementPosition);
-        this.timer.elements.end.addEventListener("click", this.resetTargetElementDimensions);
+        this.timer.elements.end.addEventListener("click", this.endElementClick);
       }
 
       /** The left position, in pixels, of the target DOM element */
@@ -619,6 +666,88 @@
         this.updateTargetElement();
       }
 
+      /** Ascending click times. */
+      #clickTimes = [];
+
+      get clickTimes() {
+        return this.#clickTimes;
+      }
+
+      set clickTimes(value) {
+        if (Array.isArray(value)) {
+          this.#clickTimes = value;
+        } else {
+          this.#clickTimes.push(value);
+
+          if (this.clickTimes.length === 2) {
+            // Generate a click interval from the two consecutive click times
+            this.clickIntervals = this.clickTimes;
+            // Remove the older click time to prepare for the next click time
+            this.#clickTimes.splice(0, 1);
+          }
+        }
+
+        this.updateClickSessionElement();
+      }
+
+      resetClickTimes() {
+        this.clickTimes = [];
+        this.clickIntervals = [];
+        this.updateClickSessionElement();
+      }
+
+      /** The intervals, in milliseconds, between consecutive clicks */
+      #clickIntervals = [];
+
+      /** Return the average of the summed `#clickIntervals` in milliseconds or 0. */
+      get clickIntervals() {
+        let clickIntervalSum = this.#clickIntervals.reduce(
+          (totalTime, recordedTime) => totalTime + recordedTime, 0
+        );
+
+        if (clickIntervalSum > 0) {
+          return Math.round(clickIntervalSum / this.#clickIntervals.length);
+        }
+
+        return clickIntervalSum;
+      }
+
+      /**
+       * Accept a length-2 array of consecutive click times and determine the interval between
+       * them. Determine the time, if any, for which the session was paused between clicks, and
+       * subtract that time from the click interval.
+       */
+      set clickIntervals(clickTimes) {
+        if (Array.isArray(clickTimes) && clickTimes.length === 0) {
+          // Reset `#clickIntervals` if `clickTimes` is empty
+          this.#clickIntervals = [];
+        } else {
+          const pauseDuration = this.getPauseDurationBetweenClicks(clickTimes[0], clickTimes[1]);
+          this.#clickIntervals.push(clickTimes[1] - clickTimes[0] - pauseDuration);
+        }
+      }
+
+      updateClickSessionElement() {
+        this.elements.clickSession.textContent = `${this.clickIntervals}`;
+      }
+
+      /** Sum the duration of time that the session was paused between two click times. */
+      getPauseDurationBetweenClicks(startClick, endClick) {
+        const sessionTimes = this.timer.sessionTimes;
+
+        return  sessionTimes.reduce((totalTime, sessionTime, index) => {
+          const nextIndex = index + 1;
+
+          if (nextIndex in sessionTimes) {
+            if (sessionTime.end > startClick && sessionTimes[index + 1].start < endClick) {
+              return totalTime + sessionTimes[index + 1].start - sessionTime.end;
+            }
+          }
+
+          return totalTime;
+        }, 0);
+      }
+
       updateTargetElement() {
         this.elements.target.style.left = `${this.targetElementLeft}px`;
         this.elements.target.style.top = `${this.targetElementTop}px`;
@@ -627,12 +756,18 @@
         this.elements.target.style.visibility = this.targetElementVisibility;
       }
 
-      resetTargetElementPosition = () => {
+      endElementClick = () => {
+        this.resetTargetElementPosition();
+        this.resetTargetElementDimensions();
+        this.resetClickTimes();
+      }
+
+      resetTargetElementPosition() {
         this.targetElementLeft = this.defaults.left;
         this.targetElementTop = this.defaults.top;
       }
 
-      resetTargetElementDimensions = () => {
+      resetTargetElementDimensions() {
         this.targetElementWidth = this.defaults.side;
         this.targetElementHeight = this.defaults.side;
       }
@@ -658,6 +793,7 @@
        */
       targetElementClick = () => {
         if (this.timer.interval && this.elements.targetToggle.checked) {
+          this.clickTimes = performance.now();
           this.setRandomTargetElementDimensions();
           this.setRandomTargetElementPositions();
           this.score.addPointsToSessionScore(this.pointValue);
@@ -754,7 +890,6 @@
           // Find the item in `this.items` using the event target element's ID
           const item = this.items.find((item) => item.domElementId === event.target.getAttribute("id"));
           const spawnTimeAtClick = item.spawnTimeSeconds;
-          console.log(spawnTimeAtClick);
           const clickTime = this.timer.seconds;
           const difference = clickTime - item.spawnTimeSeconds;
 
@@ -777,7 +912,6 @@
             }
 
             this.score.addPointsToSessionScore(points);
-            console.log(spawnTimeAtClick);
             this.logger.createLogEntry(
               `
                 ${item.presentationName}: spawned at ${timer.formatTime(spawnTimeAtClick)}, ${points} points,
