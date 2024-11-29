@@ -23,10 +23,9 @@
         --color-blue: #5a70a0;
         --color-white: #fff7eb;
         --color-grey: #707070;
-        --color-dark-grey: #303030;
         --color-light-grey: #A0A0A0;
         --color-black: #040404;
-        --color-black-transparent: rgb(4 4 4 / 75%);
+        --color-black-transparent: rgb(4 4 4 / 55%);
       }
 
       html {
@@ -86,14 +85,6 @@
         padding: 20px;
       }
 
-      #content {
-        border-top: 1px var(--color-grey) dashed;
-        flex: 1;
-        overflow: auto;
-        width: 50vw;
-        min-width: 400px;
-      }
-
       /* Items */
 
       #items {
@@ -104,10 +95,14 @@
       }
 
       .item {
+        background-size: 50%;
+        background-repeat: no-repeat;
+        background-position: center;
         border-top-right-radius: 10%;
         border-bottom-right-radius: 10%;
         border-bottom-left-radius: 10%;
-        color: var(--color-black);
+        border: 3px var(--color-white) solid;
+        color: var(--color-white);
         cursor: pointer;
         font-weight: bold;
         height: 15vh;
@@ -117,21 +112,33 @@
         padding: 10px;
       }
 
-      .item:hover, a:hover {
+      a:hover, .item:hover {
         opacity: 0.8;
       }
 
       /* Logs */
 
       #logsHeader {
+        background-color: var(--color-black-transparent);
         display: flex;
         flex-flow: row;
+        padding: 15px;
         width: 50vw;
         min-width: 400px;
       }
 
       #logsHeader div {
         width: 100%;
+      }
+
+      #content {
+        background-color: var(--color-black-transparent);
+        border-top: 1px var(--color-black) dashed;
+        flex: 1;
+        overflow: auto;
+        padding: 0 15px;
+        width: 50vw;
+        min-width: 400px;
       }
 
       #logs > p.entry {
@@ -638,7 +645,9 @@
       }
 
       setRandomTargetElementDimensions() {
-        const value = Math.floor((Math.random() * this.defaults.side) + this.defaults.side * 1.5);
+        const value = Math.floor(
+          Math.random() * ((this.defaults.side * 2) - (this.defaults.side / 2)) + (this.defaults.side / 2)
+        );
         this.targetElementWidth = value;
         this.targetElementHeight = value;
       }
@@ -681,7 +690,7 @@
             spawnIntervalSeconds: 25,
             spawnTimeSeconds: 0,
             backgroundColorClass: "background-color-red",
-            logTextColorClass: "color-red"
+            backgroundImage: "url('images/armor.webp')",
           },
           {
             presentationName: "Yellow Armor",
@@ -689,7 +698,7 @@
             spawnIntervalSeconds: 25,
             spawnTimeSeconds: 0,
             backgroundColorClass: "background-color-yellow",
-            logTextColorClass: "color-yellow"
+            backgroundImage: "url('images/armor.webp')",
           },
           {
             presentationName: "Megahealth",
@@ -697,7 +706,7 @@
             spawnIntervalSeconds: 35,
             spawnTimeSeconds: 0,
             backgroundColorClass: "background-color-blue",
-            logTextColorClass: "color-blue"
+            backgroundImage: "url('images/megahealth.webp')",
           },
         ];
 
@@ -729,6 +738,7 @@
           const element = document.createElement("div");
           element.setAttribute("id", item.domElementId);
           element.classList.add("item", item.backgroundColorClass);
+          element.style.backgroundImage = item.backgroundImage;
           element.textContent = item.spawnIntervalSeconds;
           this.elements.items.append(element);
           element.addEventListener("click", this.itemElementClick);
