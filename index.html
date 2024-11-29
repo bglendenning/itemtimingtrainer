@@ -26,6 +26,7 @@
         --color-dark-grey: #303030;
         --color-light-grey: #A0A0A0;
         --color-black: #040404;
+        --color-black-transparent: rgb(4 4 4 / 75%);
       }
 
       html {
@@ -37,7 +38,8 @@
       }
 
       body {
-        background-color: var(--color-black);
+        background-image: url("images/background.webp");
+        background-size: cover;
         color: var(--color-light-grey);
         font-family: "Quicksand", sans-serif;
         margin: 0;
@@ -75,6 +77,7 @@
       /* General */
 
       #container {
+        background-color: var(--color-black-transparent);
         display: flex;
         flex-flow: column;
         align-items: center;
@@ -305,7 +308,7 @@
       /** Create and style a paragraph element, then prepend it to the logs DOM element. */
       createLogEntry(content, color) {
         const paragraphElement = document.createElement("p");
-        paragraphElement.textContent = `${this.timer.formatTime()} - ${content}`;
+        paragraphElement.textContent = `${this.timer.formatTime(this.timer.seconds)} - ${content}`;
         paragraphElement.classList.add(color, "entry");
         this.elements.logs.prepend(paragraphElement);
       }
@@ -358,7 +361,7 @@
       }
 
       updateClockElementText() {
-        this.elements.clock.textContent = this.formatTime();
+        this.elements.clock.textContent = this.formatTime(this.seconds);
       }
 
       /** A `setInterval` object or `null`. Used to track the session's elapsed seconds. */
@@ -395,12 +398,12 @@
       }
 
       /**
-       * Calculate minutes and remainder seconds of `this.seconds`, pad both, and return a
+       * Calculate minutes and remainder seconds of `timerSeconds`, pad both, and return a
        * formatted time string.
        */
-      formatTime() {
-        const minutes = pad(Math.floor(this.seconds / 60), 2);
-        const seconds = this.seconds >= 60 ? pad(this.seconds % 60, 2) : pad(this.seconds, 2);
+      formatTime(timerSeconds) {
+        const minutes = pad(Math.floor(timerSeconds / 60), 2);
+        const seconds = timerSeconds >= 60 ? pad(timerSeconds % 60, 2) : pad(timerSeconds, 2);
 
         return `${minutes}:${seconds}`;
       }
@@ -740,13 +743,15 @@
         if (this.timer.interval) {
           // Find the item in `this.items` using the event target element's ID
           const item = this.items.find((item) => item.domElementId === event.target.getAttribute("id"));
-          const spawnTimeAtClick = this.timer.seconds;
-          const difference = spawnTimeAtClick - item.spawnTimeSeconds;
+          const spawnTimeAtClick = item.spawnTimeSeconds;
+          console.log(spawnTimeAtClick);
+          const clickTime = this.timer.seconds;
+          const difference = clickTime - item.spawnTimeSeconds;
 
           // The item element is interactive
           if (difference >= 0) {
             // The time, in seconds relative to the session timer, at which the item will next be interactive
-            item.spawnTimeSeconds = spawnTimeAtClick + item.spawnIntervalSeconds;
+            item.spawnTimeSeconds = clickTime + item.spawnIntervalSeconds;
             // Subtract a maximum of `item.spawnIntervalSeconds` points from the item points value for delayed clicks
             const points = item.spawnIntervalSeconds - Math.min(difference, item.spawnIntervalSeconds);
             let color;
@@ -762,6 +767,7 @@
             }
 
             this.score.addPointsToSessionScore(points);
+            console.log(spawnTimeAtClick);
             this.logger.createLogEntry(
               `
                 ${item.presentationName}: spawned at ${timer.formatTime(spawnTimeAtClick)}, ${points} points,
