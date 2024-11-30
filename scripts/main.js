@@ -824,37 +824,38 @@ class Items extends ClickEventListener {
     this.timer = timer;
     this.logger = logger;
     this.score = score;
+    this.items = [
+      {
+        presentationName: "Red Armor",
+        domElementId: "itemArmorRed",
+        startSpawnTimeSeconds: 0,
+        spawnIntervalSeconds: 25,
+        spawnTimeSeconds: 0,
+        backgroundColorClass: "background-color-red",
+        backgroundImageClass: "background-image-armor",
+      },
+      {
+        presentationName: "Yellow Armor",
+        domElementId: "itemArmorYellow",
+        startSpawnTimeSeconds: 0,
+        spawnIntervalSeconds: 25,
+        spawnTimeSeconds: 0,
+        backgroundColorClass: "background-color-yellow",
+        backgroundImageClass: "background-image-armor",
+      },
+      {
+        presentationName: "Megahealth",
+        domElementId: "itemHealthMega",
+        startSpawnTimeSeconds: 0,
+        spawnIntervalSeconds: 35,
+        spawnTimeSeconds: 0,
+        backgroundColorClass: "background-color-blue",
+        backgroundImageClass: "background-image-megahealth",
+      },
+    ];
   }
 
-  #items = [
-    {
-      presentationName: "Red Armor",
-      domElementId: "itemArmorRed",
-      startSpawnTimeSeconds: 0,
-      spawnIntervalSeconds: 25,
-      spawnTimeSeconds: 0,
-      backgroundColorClass: "background-color-red",
-      backgroundImageClass: "background-image-armor",
-    },
-    {
-      presentationName: "Yellow Armor",
-      domElementId: "itemArmorYellow",
-      startSpawnTimeSeconds: 0,
-      spawnIntervalSeconds: 25,
-      spawnTimeSeconds: 0,
-      backgroundColorClass: "background-color-yellow",
-      backgroundImageClass: "background-image-armor",
-    },
-    {
-      presentationName: "Megahealth",
-      domElementId: "itemHealthMega",
-      startSpawnTimeSeconds: 0,
-      spawnIntervalSeconds: 35,
-      spawnTimeSeconds: 0,
-      backgroundColorClass: "background-color-blue",
-      backgroundImageClass: "background-image-megahealth",
-    },
-  ];
+  #items;
 
   /**
    * @instance
