@@ -8,8 +8,8 @@
  */
 class ClickEventListener {
   /**
-   * The key is a DOM element's `id` attribute. The value is an instance of an `Element` for that
-   * DOM element.
+   * The key is a DOM element `id` attribute. The value is an instance of an `Element` for that DOM
+   * element.
    * @type {Object.<string, Element>}
    */
   domElements = {};
@@ -51,7 +51,9 @@ class ClickEventListener {
  */
 class Logger extends ClickEventListener {
   /**
-   * @see {@link ClickEventListener#domElements}
+   * @property {Element} logs - Displays the log entries.
+   * @property {Element} clearLogs - Can be clicked to clear the log entries.
+   * @type {Object.<string, Element>}
    */
   domElements = {
     logs: document.getElementById("logs"),
@@ -59,7 +61,7 @@ class Logger extends ClickEventListener {
   };
 
   /**
-   * @param {Timer} timer - A {@link Timer} instance.
+   * @param {Timer} timer - A `Timer` instance.
    */
   constructor(timer) {
     super();
@@ -90,14 +92,8 @@ class Logger extends ClickEventListener {
 }
 
 /**
- * Manages session time and interacts with DOM elements related to session time
- * @property {Interval} #interval - A `setInterval` instance during an active session,
- * `false` during a paused session, or `null` if the session hasn't started.
- * @property {number} #multiplier - A factor used to adjust the `setInterval` `duration` in order to
- * increase or decrease the rate at which seconds elapse. Its value is also used as a factor when
- * scoring points.
- * @property {Array.<SessionSegment>} #sessionSegments - A list of time segments in which a session
- * was started.
+ * Manages session time and interacts with DOM elements related to session time.
+ * @extends ClickEventListener
  */
 class Timer extends ClickEventListener {
   /**
@@ -135,7 +131,7 @@ class Timer extends ClickEventListener {
    * multiplier.
    * @property {Element} timescaleMultiplierIncrease - Can be clicked to increase the timescale
    * multiplier.
-   * @see {@link ClickEventListener#domElements}
+   * @type {Object.<string, Element>}
    */
   domElements = {
     clock: document.getElementById("clock"),
@@ -170,8 +166,7 @@ class Timer extends ClickEventListener {
   }
 
   /**
-   * Sets the session elapsed seconds, then calls
-   * [Timer.updateClockElementText]{@link Timer#updateClockElementText}.
+   * Sets the session elapsed seconds, and updates the clock DOM element text.
    * @instance
    * @memberof Timer
    * @method
@@ -253,7 +248,7 @@ class Timer extends ClickEventListener {
 
   /**
    * Sets the session timescale multiplier if the `timeScaleMultiplier` value is greater than 0,
-   * then calls
+   * then updates the timescale multiplier DOM element text.
    * [Timer.updateTimescaleMultiplierElementText]{@link Timer#updateTimescaleMultiplierElementText}.
    * @memberof Timer
    * @method
@@ -278,7 +273,7 @@ class Timer extends ClickEventListener {
    * the return value of [get timeScaleMultiplier]{@link Timer#timescaleMultiplier(0)}.
    */
   updateTimescaleMultiplierElementText() {
-    this.domElements.timescaleMultiplier.textContent = this.timescaleMultiplier;
+    this.domElements.timescaleMultiplier.textContent = this.timescaleMultiplier.toString();
   }
 
   #sessionSegments = [];
@@ -296,8 +291,8 @@ class Timer extends ClickEventListener {
   }
 
   /**
-   * Adds a [Timestamp]{@link Timer.Timestamp} that represents either of a
-   * [SessionSegment's]{@link Timer.SessionSegment} `start` or `end` values. Each `SessionSegment`
+   * Adds a [Timestamp]{@link Timer.Timestamp} that represents a
+   * [SessionSegment's]{@link Timer.SessionSegment} `start` or `end` value. Each `SessionSegment`
    * is initially assigned the `start` property. The `end` property is assigned when the session is
    * paused. When the session is restarted, the setter creates a new `SessionSegment` and adds it to
    * `sessionSegments`. When the session is ended, `sessionSegments` is set to an empty array.
@@ -341,14 +336,13 @@ class Timer extends ClickEventListener {
   }
 
   /**
-   * Calculate minutes and remainder seconds of `seconds`, and left-pad both to a character-length
-   * of 2.
+   * Calculate minutes and remainder seconds of `seconds`, and left-pad both.
    * @param {number} seconds - The number of seconds to format as a time string.
    * @returns {string} A time string formatted as `mm:ss`.
    */
   formatTime(seconds) {
     const paddedMinutes = pad(Math.floor(seconds / 60), 2);
-    const paddedSeconds = pad(seconds % 60, 2).toString();
+    const paddedSeconds = pad(seconds % 60, 2);
 
     return `${paddedMinutes}:${paddedSeconds}`;
   }
@@ -404,15 +398,29 @@ class Timer extends ClickEventListener {
 }
 
 /**
- * Track the score and manipulate DOM elements related to interacting with and presenting the score.
+ * Manages scores and interacts with DOM elements related to the scores.
+ * @extends ClickEventListener
  */
 class Score extends ClickEventListener {
+  /**
+   * @property {Element} session - Displays the session score.
+   * @property {Element} high - Displays the high score.
+   * @type {Object.<string, Element>}
+   */
   domElements = {
     session: document.getElementById("sessionScore"),
     high: document.getElementById("highScore"),
   };
+  /**
+   * The character-length to left-pad scores to.
+   * @type {number}
+   */
   paddedLength = 6;
 
+  /**
+   * Sets the properties required to initialize the DOM.
+   * @param {Timer} timer - A `Timer` instance.
+   */
   constructor(timer) {
     super();
 
@@ -421,29 +429,66 @@ class Score extends ClickEventListener {
     this.session = 0;
   }
 
-  /** An integer used to track the greatest session score. */
   #high;
 
+  /**
+   * @instance
+   * @memberof Score
+   * @method
+   * @returns {number} The high score set by [set high]{@link Score#high(1)}.
+   * @summary `getter`
+   * @variation 0
+   */
   get high() {
     return this.#high;
   }
 
+  /**
+   * Sets the high score, and updates the high score DOM element text.
+   * @instance
+   * @memberof Score
+   * @method
+   * @param {number} score - The number to set the high score to.
+   * @summary `setter`
+   * @variation 1
+   */
   set high(score) {
     this.#high = score;
     this.updateHighElementText();
   }
 
+  /**
+   * Sets [Score.domElements.high.textContent]{@link Score#domElements} to the left-padded return
+   * value of [get high]{@link Score#high(0)}.
+   */
   updateHighElementText() {
     this.domElements.high.textContent = pad(this.high, this.paddedLength);
   }
 
-  /** An integer used to track the session score. */
   #session;
 
+  /**
+   * @instance
+   * @memberof Score
+   * @method
+   * @returns {number} The session score set by [set session]{@link Score#session(1)}
+   * @summary `getter`
+   * @variation 0
+   */
   get session() {
     return this.#session;
   }
 
+  /**
+   * Sets the session score, updates session high score DOM element text, and conditionally updates
+   * the high score.
+   * @instance
+   * @memberof Score
+   * @method
+   * @param {number} points - The number of points to set the session score to.
+   * @summary `setter`
+   * @variation 1
+   */
   set session(points) {
     this.#session = points;
     this.updateSessionElementText();
@@ -453,11 +498,20 @@ class Score extends ClickEventListener {
     }
   }
 
-  /** Multiply `points` by `timer.timescaleMultiplier` and add to the session score. */
+  /**
+   * Multiplies scored points by the return value of
+   * [Timer.timescaleMultiplier]{@link timer#timescaleMultiplier(0)}, adds
+   * that product to the session score, then sets the session score.
+   * @param {number} points - The number of points to add to the session score.
+   */
   addPointsToSessionScore(points) {
     this.session += points * this.timer.timescaleMultiplier
   }
 
+  /**
+   * Sets [Score.domElements.session.textContent]{@link Score#domElements} to the left-padded return
+   * value of [get session]{@link Score#session(0)}.
+   */
   updateSessionElementText() {
     this.domElements.session.textContent = pad(this.session, this.paddedLength);
   }
@@ -484,8 +538,6 @@ class Target extends ClickEventListener {
 
     this.timer = timer;
     this.score = score;
-
-    // Initialize the class
     this.targetElementLeft = this.defaults.left;
     this.targetElementTop = this.defaults.top;
     this.targetElementWidth = this.defaults.side;
@@ -722,90 +774,146 @@ class Target extends ClickEventListener {
   }
 }
 
-/** Track items and manipulate DOM elements related to interacting with and presenting items. */
+/**
+* Manages items and interacts with DOM elements related to items. Item {@link ClickEventListener}
+* delegatees can accept or ignore browser `click` events depending on the item state. Item DOM
+* elements are dynamically added to the DOM. Item event delegatees are dynamically added to the
+* class object.
+* @extends ClickEventListener
+*/
 class Items extends ClickEventListener {
+  /**
+   * An item configuration that contains data required for DOM interactions.
+   * @memberof Items
+   * @property {string} presentationName - The name to be displayed in log entries.
+   * @property {string} domElementId - The item's DOM element `id` attribute.
+   * @property {number} startSpawnTimeSeconds - The time, relative to the value returned by
+   * [get seconds]{@link Timer#seconds(0)}, at which the event delegatee will begin accepting click
+   * events when a new session is started. Defining a non-zero value will result in the item's event
+   * delegatee ignoring clicks for `spawnIntervalSeconds` following a new session being started.
+   * @property {number} spawnIntervalSeconds - The interval for which the item's event delegatee
+   * ignores `click` events after it has accepted a `click` event. This is also the points value
+   * provided to [Score.addPointsToSessionScore]{@link Score#addPointsToSessionScore} when the event
+   * delegatee accepts a click.
+   * @property {number} spawnTimeSeconds - The time, relative to the value returned by
+   * [get seconds]{@link Timer#seconds(0)}, at which the item will begin accepting clicks events.
+   * @property {string} backgroundColorClass - The name of a CSS class that defines a background
+   * color.
+   * @property {string} backgroundImageClass - The name of a CSS class that defines a background
+   * image.
+   * @typedef {Object<string, (string|number)>} Item
+   */
+
+  /**
+   * @property {Element} items - Contains item elements.
+   * @type {Object.<string, Element>}
+   */
   domElements = {
     items: document.getElementById("items"),
   };
 
+  /**
+   * Sets the properties required to initialize the DOM.
+   * @param {Timer} timer - A `Timer` instance.
+   * @param {Logger} logger - A `Logger` instance.
+   * @param {Score} score - A `Score` instance.
+   */
   constructor(timer, logger, score) {
     super();
 
     this.timer = timer;
     this.logger = logger;
     this.score = score;
-
-    // Initialize the class
-    this.items = [
-      {
-        presentationName: "Red Armor",
-        domElementId: "itemArmorRed",
-        spawnIntervalSeconds: 25,
-        spawnTimeSeconds: 0,
-        backgroundColorClass: "background-color-red",
-        backgroundImage: "url('images/armor.webp')",
-      },
-      {
-        presentationName: "Yellow Armor",
-        domElementId: "itemArmorYellow",
-        spawnIntervalSeconds: 25,
-        spawnTimeSeconds: 0,
-        backgroundColorClass: "background-color-yellow",
-        backgroundImage: "url('images/armor.webp')",
-      },
-      {
-        presentationName: "Megahealth",
-        domElementId: "itemHealthMega",
-        spawnIntervalSeconds: 35,
-        spawnTimeSeconds: 0,
-        backgroundColorClass: "background-color-blue",
-        backgroundImage: "url('images/megahealth.webp')",
-      },
-    ];
   }
 
-  /**
-   * An array of objects containing item information. Used to manipulate the DOM and track item
-   * interactivity.
-   */
-  #items;
+  #items = [
+    {
+      presentationName: "Red Armor",
+      domElementId: "itemArmorRed",
+      startSpawnTimeSeconds: 0,
+      spawnIntervalSeconds: 25,
+      spawnTimeSeconds: 0,
+      backgroundColorClass: "background-color-red",
+      backgroundImageClass: "background-image-armor",
+    },
+    {
+      presentationName: "Yellow Armor",
+      domElementId: "itemArmorYellow",
+      startSpawnTimeSeconds: 0,
+      spawnIntervalSeconds: 25,
+      spawnTimeSeconds: 0,
+      backgroundColorClass: "background-color-yellow",
+      backgroundImageClass: "background-image-armor",
+    },
+    {
+      presentationName: "Megahealth",
+      domElementId: "itemHealthMega",
+      startSpawnTimeSeconds: 0,
+      spawnIntervalSeconds: 35,
+      spawnTimeSeconds: 0,
+      backgroundColorClass: "background-color-blue",
+      backgroundImageClass: "background-image-megahealth",
+    },
+  ];
 
+  /**
+   * @instance
+   * @memberof Items
+   * @method
+   * @returns {Array.<Item>} The items' configurations.
+   * @summary `getter`
+   * @variation 0
+   */
   get items() {
     return this.#items;
   }
 
+  /**
+   * Sets the items, and creates the items' DOM elements..
+   * @instance
+   * @memberof Items
+   * @method
+   * @param {Array.<Item>} items - The items' configurations to set.
+   * @summary `setter`
+   * @variation 1
+   */
   set items(items) {
     this.#items = items;
     this.createItemsDomElements(items);
   }
 
   /**
-   * Create a DOM element for each item in `items`, style the element, then create an event listener
-   * for the element.
+   * Create a DOM element for each item in `items`, style the element, and create an event
+   * delegatee for the element and add it to the class object.
+   * @param {Array.<Item>} items - The item configurations for which to create DOM elements and
+   * event delegatees.
    */
   createItemsDomElements(items) {
     items.forEach((item) => {
+      // Set the initial item spawn time
+      item.spawnTimeSeconds += item.startSpawnTimeSeconds;
       const element = document.createElement("div");
       element.setAttribute("id", item.domElementId);
-      element.classList.add("item", item.backgroundColorClass);
-      element.style.backgroundImage = item.backgroundImage;
+      element.classList.add("item", item.backgroundColorClass, item.backgroundImageClass);
       element.textContent = item.spawnIntervalSeconds;
       this.domElements.items.append(element);
       this.domElements[item.domElementId] = element;
-      // Create the event listener
-      this[this.constructEventMethodName(element, "click")] = (event) => {
+      // Create the event delegatee
+      this[this.constructEventMethodName(element)] = (event) => {
         this.itemsElementClick(event);
       };
     });
   }
 
-  resetItemsDomElementInnerHtml() {
+  /** Clear the items DOM element. */
+  resetItemsDomElementText() {
     this.domElements.items.textContent = "";
   }
 
   /**
-   * Determine if the item clicked is interactive, and, if it is, add the item's point value to the
-   * session score, then log the click, else log the early click.
+   * A {@link ClickEventListener} delegatee that determines if the item is accepting clicks,
+   * conditionally adds the item's points value to the session score, then logs the click.
+   * @method
    */
   itemsElementClick = (event) => {
     if (this.timer.interval) {
@@ -815,16 +923,20 @@ class Items extends ClickEventListener {
       });
       const spawnTimeAtClick = item.spawnTimeSeconds;
       const clickTime = this.timer.seconds;
+      // A difference < 0 is early, and will be rejected
       const difference = clickTime - item.spawnTimeSeconds;
 
-      // The item element is interactive
+      // Pass the event to the delegatee
       if (difference >= 0) {
-        // The time, in seconds relative to the session timer, the item will become clickable
+        // The next time, in seconds relative to the session timer, the delegatee will accept clicks
         item.spawnTimeSeconds = clickTime + item.spawnIntervalSeconds;
-        // Subtract a maximum of `item.spawnIntervalSeconds` points from the item points value
+        // Subtract a point per second that a click followed an item "spawn"
+        // A maximum of `item.spawnIntervalSeconds` points can be subtracted
         const points = (
           item.spawnIntervalSeconds - Math.min(difference, item.spawnIntervalSeconds)
         );
+
+        // Select a color for the log entry
         let color;
 
         if (difference === 0) {
@@ -856,11 +968,12 @@ class Items extends ClickEventListener {
   }
 
   /**
-   * Clear the items DOM element, reset each item's `spawnTimeSeconds` so that the items are
-   * interactive when a new session starts, then set `this.items` with the updated items.
+   * Clear the items DOM element, reset each item's `spawnTimeSeconds`, then set `this.items` and
+   * recreate the items' DOM elements and event delegatees.
+   * @method
    */
   endElementClick = (event) => {
-    this.resetItemsDomElementInnerHtml();
+    this.resetItemsDomElementText();
     // Create a deep copy of `this.items`
     const items = structuredClone(this.items);
 
@@ -872,7 +985,12 @@ class Items extends ClickEventListener {
   }
 }
 
-/** Convert `number` to string `paddedValue` and left-pad with zeroes to length `length` */
+/**
+ * Convert `number` to a string and left-pad with zeroes to length `length`.
+ * @param {number} number - The number to pad.
+ * @param {number} length - The desired character-length of the padded string.
+ * @returns {string} - The padded string.
+ */
 function pad(number, length) {
   let paddedValue = number.toString();
 
