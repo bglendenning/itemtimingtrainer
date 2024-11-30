@@ -9,7 +9,7 @@ Quake Live duel maps feature two common forms of power-ups, megahealth and color
 armors is 25 seconds, and 35 seconds for megahealth. Matches can be intensely dynamic, with many context switches and
 distractions that can lead to difficulty for players to mindfully calculate picked-up item's next spawn time. Difficulty
 compounds when the player must calculate a spawn time that extends into the next minute of the match, because
-determining the remainder over, as an example, _60_ of _48 + 35_, isn't a commonly intuitive process.
+determining the remainder over _60_ of, as an example, _48 + 35_, isn't a commonly intuitive process.
 
 Through practice, the player will develop familiarity with the patterns and relationships in the process, and memorize
 results, such that, when in game, the player will less beholden to the mental demands of calculating spawn times, and
