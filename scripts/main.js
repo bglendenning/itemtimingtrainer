@@ -1,10 +1,10 @@
 "use strict";
 
 /**
- * Listener methods that are called by `EventTarget` are defined as class methods using arrow
- * function syntax. This prevents `EventTarget` from binding its context to the method's `this`
- * context, as the arrow function `this` will not change based on the execution context. This
- * eliminates the need to bind the class's `this` context to the listener when it is defined.
+ * Listener class methods that are called by `EventTarget` are defined using arrow function syntax.
+ * This prevents `EventTarget` from binding its context to the method's `this` context, as the arrow
+ * function `this` will not change based on the execution context. This eliminates the need to bind
+ * the class's `this` context to the listener when it is defined.
  */
 
 /** Manipulate DOM elements related to interacting with and presenting the logger. */
@@ -82,9 +82,8 @@ class Timer {
   }
 
   /**
-  * `null` if a session has not been started or has ended, a `setInterval` object if a session
-  * is started, or `false` if a session is paused. Used to track the session state and elapsed
-  * seconds.
+  * `null` if a session has not been started or has ended, a `setInterval` object if a session is
+  * started, or `false` if a session is paused. Used to track the session state and elapsed seconds.
   * */
   #interval;
 
@@ -96,7 +95,9 @@ class Timer {
     clearInterval(this.interval);
 
     if (interval) {
-      this.#interval = setInterval(() => this.seconds += 1, (1000 / this.multiplier));
+      this.#interval = setInterval(
+        () => this.seconds += 1, (1000 / this.multiplier)
+      );
     } else {
       this.#interval = interval;
     }
@@ -133,12 +134,12 @@ class Timer {
   }
 
   /**
-   * Track the session state over time by recording consecutive start and pause times. Each
-   * object contains a `start` property. An `end` property is added when the session is paused.
-   * An object with both properties represents a period of time in which the session was active.
-   * If the last object in the array has only the `start` property, then the session is active.
-   * If the last object in the array has both `start` and `end` properties, then the session is
-   * paused. If the array is empty, the session hasn't been started.
+   * Track the session state over time by recording consecutive start and pause times. Each object
+   * contains a `start` property. An `end` property is added when the session is paused. An object
+   * with both properties represents a period of time in which the session was active. If the last
+   * object in the array has only the `start` property, then the session is active. If the last
+   * object in the array has both `start` and `end` properties, then the session is paused. If the
+   * array is empty, the session hasn't been started.
    */
   set sessionTimes(value) {
     if (Array.isArray(value) && value.length === 0) {
@@ -172,8 +173,8 @@ class Timer {
   }
 
   /**
-   * Calculate minutes and remainder seconds of `timerSeconds`, pad both, and return a
-   * formatted time string.
+   * Calculate minutes and remainder seconds of `timerSeconds`, pad both, and return a formatted
+   * time string.
    */
   formatTime(timerSeconds) {
     const minutes = pad(Math.floor(timerSeconds / 60), 2);
@@ -220,8 +221,7 @@ class Timer {
 }
 
 /**
- * Track the score and manipulate DOM elements related to interacting with and presenting the
- * score.
+ * Track the score and manipulate DOM elements related to interacting with and presenting the score.
  */
 class Score {
   // The string length to pad scores to
@@ -465,9 +465,9 @@ class Target {
   }
 
   /**
-   * Accept a length-2 array of consecutive click times and determine the interval between
-   * them. Determine the duration for which the session was paused between clicks, and subtract
-   * that duration from the click interval.
+   * Accept a length-2 array of consecutive click times and determine the interval between them.
+   * Determine the duration for which the session was paused between clicks, and subtract that
+   * duration from the click interval.
    */
   set clickIntervals(clickTimes) {
     if (Array.isArray(clickTimes) && clickTimes.length === 0) {
@@ -482,9 +482,7 @@ class Target {
           `Invalid type(s) for clickTimes: ${typeof(clickTimes[0])}, ${typeof(clickTimes[1])}`
         );
       } else if (clickTimes[1] - clickTimes[0] < 0) {
-        throw new Error(
-          `Invalid time sequence for clickTimes: ${clickTimes[1]}, ${clickTimes[2]}`
-        );
+        throw new Error(`Invalid time sequence for clickTimes: ${clickTimes[1]}, ${clickTimes[2]}`);
       }
 
       const pauseDuration = this.getPauseDurationBetweenClicks(clickTimes[0], clickTimes[1]);
@@ -514,8 +512,8 @@ class Target {
   }
 
   /**
-   * Set the target DOM element to random dimensions and position, and add the points value to
-   * the session score.
+   * Set the target DOM element to random dimensions and position, and add the points value to the
+   * session score.
    */
   targetElementClick = () => {
     if (this.timer.interval && this.elements.targetToggle.checked) {
@@ -547,9 +545,7 @@ class Target {
   }
 }
 
-/**
- * Track items and manipulate DOM elements related to interacting with and presenting items.
- */
+/** Track items and manipulate DOM elements related to interacting with and presenting items. */
 class Items {
   constructor(timer, logger, score) {
     this.timer = timer;
@@ -606,8 +602,8 @@ class Items {
   }
 
   /**
-   * Create a DOM element for each item in `items`, style the element, then create an
-   * event listener for the element.
+   * Create a DOM element for each item in `items`, style the element, then create an event listener
+   * for the element.
    */
   createItemsDomElements(items) {
     items.forEach((item) => {
@@ -626,8 +622,8 @@ class Items {
   }
 
   /**
-   * Determine if the item clicked is interactive, and, if it is, add the item's point value to
-   * the session score, then log the click, else log the early click.
+   * Determine if the item clicked is interactive, and, if it is, add the item's point value to the
+   * session score, then log the click, else log the early click.
    */
   itemElementClick = (event) => {
     if (this.timer.interval) {
