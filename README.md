@@ -33,23 +33,22 @@ represent other games or desired scenarios.
 
 ## Items
 
-Items are [defined](index.html#L674-L699) in the `Items` class.
+Items are [defined](index.html#L864-L889) in the `Items` class.
 
 * `presentationName`: The name to present when logging item clicks.
 * `domElementId`: A valid DOM element ID for use in creating the item's DOM element.
 * `spawnIntervalSeconds`: The interval between when an item is picked up and when it will spawn again.
-* `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will
-   spawn. If defined as 0, the item can be picked up immediately upon starting a session, else the
-   item will spawn `spawnTimeSeconds` after the session starts.
-* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L169-L191).
-* `logTextColorClass`: The name of one of the project's [color classes](index.html#L145-L167).
+* `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will spawn. If defined as
+  0, the item can be picked up immediately upon starting a session, else the item will spawn `spawnTimeSeconds` after
+  the session starts.
+* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L180-L202).
 
 ## Target
 
-The target defaults and point value are [defined](index.html#L522-L527) in the `Target` class.
+The target defaults and point value are [defined](index.html#L590-L595) in the `Target` class.
 
 * `target.defaults.left`: The target DOM element's default left position in pixels.
 * `target.defaults.top`: The target DOM element's default top position in pixels.
 * `target.defaults.side`: The target DOM element's default width and height in pixels.
-* `target.pointValue`: The value&mdash;before timescale adjustment&mdash;to add to the session score
-   when the target is clicked.
+* `target.pointsValue`: The value&mdash;before timescale adjustment&mdash;to add to the session score when the target is 
+  clicked.
