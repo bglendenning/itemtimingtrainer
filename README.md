@@ -47,7 +47,7 @@ Items are [defined](scripts/main.js#L563-L588) in the `Items` class.
 
 ## Target
 
-The target defaults and point value are [defined](scripts/main.js#L289-294) in the `Target` class.
+The target defaults and point value are [defined](scripts/main.js#L289-L294) in the `Target` class.
 
 * `target.defaults.left`: The target DOM element's default left position in pixels.
 * `target.defaults.top`: The target DOM element's default top position in pixels.
