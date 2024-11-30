@@ -30,12 +30,12 @@ page contains instructions for how to operate the game.
 # Customization
 
 Though Item Timing Trainer is designed to represent Quake Live item properties, various features can be customized to
-represent other games or desired scenarios. To do so, clone the repository and edit `index.html`. To test changes, open
-the local copy of `index.html` in a web browser. 
+represent other games or desired scenarios. To do so, clone the repository and make the desired changes. To test
+changes, open the local copy of `index.html` in a web browser. 
 
 ## Items
 
-Items are [defined](index.html#L864-L889) in the `Items` class.
+Items are [defined](scripts/main.js#L563-L588) in the `Items` class.
 
 * `presentationName`: The name to present when logging item clicks.
 * `domElementId`: A valid DOM element ID for use in creating the item's DOM element.
@@ -43,11 +43,11 @@ Items are [defined](index.html#L864-L889) in the `Items` class.
 * `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will spawn. If defined as
   0, the item can be picked up immediately upon starting a session, else the item will spawn `spawnTimeSeconds` after
   the session starts.
-* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L180-L202).
+* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L182-L204).
 
 ## Target
 
-The target defaults and point value are [defined](index.html#L590-L595) in the `Target` class.
+The target defaults and point value are [defined](scripts/main.js#L289-294) in the `Target` class.
 
 * `target.defaults.left`: The target DOM element's default left position in pixels.
 * `target.defaults.top`: The target DOM element's default top position in pixels.
