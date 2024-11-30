@@ -870,7 +870,7 @@ class Items extends ClickEventListener {
   }
 
   /**
-   * Sets the items, and creates the items' DOM elements..
+   * Sets the items, and creates the items' DOM elements.
    * @instance
    * @memberof Items
    * @method
@@ -896,7 +896,7 @@ class Items extends ClickEventListener {
       const element = document.createElement("div");
       element.setAttribute("id", item.domElementId);
       element.classList.add("item", item.backgroundColorClass, item.backgroundImageClass);
-      element.textContent = item.spawnIntervalSeconds;
+      element.textContent = item.spawnIntervalSeconds.toString();
       this.domElements.items.append(element);
       this.domElements[item.domElementId] = element;
       // Create the event delegatee
