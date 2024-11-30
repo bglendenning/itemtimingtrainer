@@ -24,12 +24,14 @@ without deadlines, client demands, or compromise with team members, for better o
 
 # Using Item Timing Trainer
 
-Clone the repository and open `index.html` in a web browser. The page contains instructions for how to operate the game.
+Item Timing Trainer can be accessed at its GitHub Pages [page](https://bglendenning.github.io/itemtimingtrainer/). The
+page contains instructions for how to operate the game.
 
 # Customization
 
 Though Item Timing Trainer is designed to represent Quake Live item properties, various features can be customized to
-represent other games or desired scenarios.
+represent other games or desired scenarios. To do so, clone the repository and edit `index.html`. To test changes, open
+the local copy of `index.html` in a web browser. 
 
 ## Items
 
