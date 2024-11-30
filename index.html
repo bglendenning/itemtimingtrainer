@@ -228,16 +228,16 @@
 
     <div id="container">
       <div class="text-center text-large">
-        <a href="javascript:void(0)" id="timerStart">Start</a>
-        <a href="javascript:void(0)" id="timerPause">Pause</a>
-        <a href="javascript:void(0)" id="timerEnd">End</a>
-        <a href="javascript:void(0)" id="timerMultiplierDecrease">-</a>
-        <a href="javascript:void(0)" id="timerMultiplierIncrease">+</a>
+        <a href="javascript:void(0)" id="start">Start</a>
+        <a href="javascript:void(0)" id="pause">Pause</a>
+        <a href="javascript:void(0)" id="end">End</a>
+        <a href="javascript:void(0)" id="timescaleMultiplierDecrease">-</a>
+        <a href="javascript:void(0)" id="timescaleMultiplierIncrease">+</a>
       </div>
 
       <div class="text-center text-larger">
-        <span id="timerClock">00:00</span>
-        <span id="timerMultiplier">1</span>x
+        <span id="clock">00:00</span>
+        <span id="timescaleMultiplier">1</span>x
       </div>
 
       <div id="items"></div>
@@ -247,11 +247,11 @@
       </div>
 
       <div id="logsHeader">
-        <div>High: <span id="scoreHigh"></span></div>
+        <div>High: <span id="highScore"></span></div>
 
-        <div class="text-center">Session: <span id="scoreSession"></span></div>
+        <div class="text-center">Session: <span id="sessionScore"></span></div>
 
-        <div class="text-right">Avg. Click: <span id="clickSession"></span>ms</div>
+        <div class="text-right">Avg. Click: <span id="averageClick"></span>ms</div>
       </div>
 
       <div id="content">
