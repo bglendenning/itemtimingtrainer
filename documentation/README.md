@@ -28,8 +28,8 @@ opportunities for feedback, as developers tend to avoid reading it.
 The current code is class-based, and was composed with an emphasis on being self-documenting. Effort
 is mindfully exerted into carefully selecting meaningful symbol names with consistent qualities,
 encapsulating similar functionality in coherent structures, abstracting complex functionality
-into simpler forms without creating confusing relationships, and esoteric or difficult-to-read
-language features for the sake of reducing line count.
+into simpler forms without creating confusing relationships, and avoiding the use of esoteric
+language features or difficult-to-read solutions for the sake of reducing line count.
 
 ## Event Delegation
 
