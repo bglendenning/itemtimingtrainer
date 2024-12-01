@@ -101,11 +101,12 @@ class Timer extends ClickEventListener {
   constructor() {
     super();
 
+    this.state = {};
     this.seconds = 0;
+    this.interval = null;
     this.timescaleMultiplier = 1;
+    this.sessionSegments = [];
   }
-
-  #seconds;
 
   /**
    * @instance
@@ -116,7 +117,7 @@ class Timer extends ClickEventListener {
    * @variation 0
    */
   get seconds() {
-    return this.#seconds;
+    return this.state.seconds;
   }
 
   /**
@@ -130,7 +131,7 @@ class Timer extends ClickEventListener {
    * @variation 1
    */
   set seconds(seconds) {
-    this.#seconds = seconds;
+    this.state.seconds = seconds;
     this.updateClockElementText();
   }
 
@@ -143,8 +144,6 @@ class Timer extends ClickEventListener {
     this.domElements.clock.textContent = this.formatTime(this.seconds);
   }
 
-  #interval = null;
-
   /**
    * @instance
    * @memberof Timer
@@ -155,7 +154,7 @@ class Timer extends ClickEventListener {
    * @variation 0
    */
   get interval() {
-    return this.#interval;
+    return this.state.interval;
   }
 
   /**
@@ -166,7 +165,7 @@ class Timer extends ClickEventListener {
    * @instance
    * @memberof Timer
    * @method
-   * @param {(Timer.Interval|true)} interval - The interval state to set the interval to.
+   * @param {(null|boolean|number)} interval - The interval state to set the interval to.
    * @summary `setter`
    * @variation 1
    */
@@ -178,16 +177,14 @@ class Timer extends ClickEventListener {
 
     if (interval) {
       // The session is started
-      this.#interval = setInterval(
+      this.state.interval = setInterval(
         () => this.seconds += 1, (1000 * this.timescaleMultiplier)
       );
     } else {
       // The session is paused or ended
-      this.#interval = interval;
+      this.state.interval = interval;
     }
   }
-
-  #timescaleMultiplier;
 
   /**
    * @instance
@@ -199,7 +196,7 @@ class Timer extends ClickEventListener {
    * @variation 0
    */
   get timescaleMultiplier() {
-    return this.#timescaleMultiplier;
+    return this.state.timescaleMultiplier;
   }
 
   /**
@@ -213,7 +210,7 @@ class Timer extends ClickEventListener {
    */
   set timescaleMultiplier(timescaleMultiplier) {
     if (timescaleMultiplier > 0) {
-      this.#timescaleMultiplier = timescaleMultiplier;
+      this.state.timescaleMultiplier = timescaleMultiplier;
 
       if (this.interval) {
         this.interval = true;
@@ -231,8 +228,6 @@ class Timer extends ClickEventListener {
     this.domElements.timescaleMultiplier.textContent = this.timescaleMultiplier.toString();
   }
 
-  #sessionSegments = [];
-
   /**
    * @instance
    * @memberof Timer
@@ -242,7 +237,7 @@ class Timer extends ClickEventListener {
    * @variation 0
    */
   get sessionSegments() {
-    return this.#sessionSegments;
+    return this.state.sessionSegments;
   }
 
   /**
@@ -262,7 +257,7 @@ class Timer extends ClickEventListener {
   set sessionSegments(value) {
     if (Array.isArray(value) && value.length === 0) {
       // The session has ended
-      this.#sessionSegments = value;
+      this.state.sessionSegments = value;
     } else if (value.length > 0) {
       throw new Error(`Invalid array length for value: ${value.length}`);
     } else {
@@ -273,7 +268,7 @@ class Timer extends ClickEventListener {
       if (this.sessionSegments.length === 0) {
         // A new session has started
         // Add the new start time to the session times
-        this.#sessionSegments.push({start: value});
+        this.state.sessionSegments.push({start: value});
       } else {
         const index = this.sessionSegments.length - 1;
         const lastSessionTime = this.sessionSegments[index];
@@ -281,11 +276,11 @@ class Timer extends ClickEventListener {
         if (lastSessionTime.hasOwnProperty("end")) {
           // Since the last session time has an end, the session is being restarted
           // Add a new session start time
-          this.#sessionSegments.push({start: value});
+          this.state.sessionSegments.push({start: value});
         } else {
           // Since the session time doesn't have an end, the session is being paused
           // Add the pause time to the last session time
-          this.#sessionSegments[index].end = value;
+          this.state.sessionSegments[index].end = value;
         }
       }
     }
