@@ -22,35 +22,15 @@ restrictions I've imposed are that the project will not use any frameworks or li
 essentially a naive web development playground to practice composing code to my standards at a given point in time
 without deadlines, client demands, or compromise with team members, for better or worse.
 
-# Using Item Timing Trainer
+# Usage
 
 Item Timing Trainer can be accessed at its GitHub Pages [page](https://bglendenning.github.io/itemtimingtrainer/). The
 page contains instructions for how to operate the game.
 
 # Customization
 
+[Documentation](https://bglendenning.github.io/itemtimingtrainer/documentation/)
+
 Though Item Timing Trainer is designed to represent Quake Live item properties, various features can be customized to
 represent other games or desired scenarios. To do so, clone the repository and make the desired changes. To test
 changes, open the local copy of `index.html` in a web browser. 
-
-## Items
-
-Items are [defined](scripts/main.js#L563-L588) in the `Items` class.
-
-* `presentationName`: The name to present when logging item clicks.
-* `domElementId`: A valid DOM element ID for use in creating the item's DOM element.
-* `spawnIntervalSeconds`: The interval between when an item is picked up and when it will spawn again.
-* `spawnTimeSeconds`: The next time, relative to the current session timer, at which the item will spawn. If defined as
-  0, the item can be picked up immediately upon starting a session, else the item will spawn `spawnTimeSeconds` after
-  the session starts.
-* `backgroundColorClass`: The name of one of the project's [background color classes](index.html#L182-L204).
-
-## Target
-
-The target defaults and point value are [defined](scripts/main.js#L289-L294) in the `Target` class.
-
-* `target.defaults.left`: The target DOM element's default left position in pixels.
-* `target.defaults.top`: The target DOM element's default top position in pixels.
-* `target.defaults.side`: The target DOM element's default width and height in pixels.
-* `target.pointsValue`: The value&mdash;before timescale adjustment&mdash;to add to the session score when the target is 
-  clicked.

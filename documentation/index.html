@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Item Timing Trainer Documentation</h1>
+<p><a href="https://github.com/bglendenning/itemtimingtrainer/">GitHub Repository</a>
+<a href="https://bglendenning.github.io/itemtimingtrainer/">Item Timing Trainer on GitHub Pages</a></p>
+<p>This is an exercise in documentation. The intent is to gain experience and insight into the process
+by writing with a focus on brevity, clarity, and thoroughness. No guarantee is provided as to the
+achievement of those goals.</p>
+<p>Item Timing Trainer is a personal project that has been overhauled twice over ~15 years. The initial
+(and current) intent was (and is) to develop a pure HTML, CSS, and Javascript application without
+the reliance on frameworks or libraries—an &quot;intrinsic&quot; approach that is enjoyable for the less
+stringent reliance on keeping up with often-chaotic practices and standards manifested by the
+teeming development technologies ecosystems. The core language APIs tend to be more mature and
+robust than those of frameworks and libraries, and the problems presented by using core language
+features leads to a fuller understanding of the platforms they are implemented on, as well as an
+ability to more capably understand the frameworks and libraries that depend on them, whereas working
+with frameworks and libraries obscures the intrinsic properties of the language with idiomatic
+conventions that, when learned, don't frequently transfer to capability with other frameworks of
+libraries.</p>
+<p>Much of the current iteration of Item Timing Trainer is inspired by my experience with Python
+development over the past 5 years, and the motivation for documenting it comes from experience
+working with other developers in professional settings. Documentation is difficult, and, in private
+enterprise, often grossly lacking, with few opportunities for practicing it, and even fewer
+opportunities for feedback, as developers tend to avoid reading it.</p>
+<p>The current code is class-based, and was composed with an emphasis on being self-documenting. Effort
+is mindfully exerted into carefully selecting meaningful symbol names with consistent qualities,
+encapsulating similar functionality in coherent structures, abstracting complex functionality
+into simpler forms without creating confusing relationships, and esoteric or difficult-to-read
+language features for the sake of reducing line count.</p>
+<h2>Event Delegation</h2>
+<p>Item Timing Trainer was originally designed so that one or more listeners were added to the client
+per interactive DOM element. If a single <code>click</code> event needed to be listened to by separate parts of
+the application, then a those parts of the application would add listeners as required.</p>
+<p>Event delegation is now implemented. The <code>ClickEventListener</code> class serves as a mixin that adds a
+<code>click</code> event listener to <code>document</code> per instantiated subclass. <code>ClickEventListener</code> dictates a
+listener naming format, <code>&lt;DOM element ID&gt;ElementClick</code>. When the subclass's listener receives an
+event, it checks the subclass object for a property that matches the naming format. If a property is
+found, then the listener tests whether it is callable, and, if so, calls the property, passing the
+event as a parameter to the method, referred throughout the documentation as an <code>event delegatee</code>.</p>
+<h2>JSDoc Nuances</h2>
+<p>The documentation was created using <a href="https://jsdoc.app/">JSDoc</a>. An interesting solution for
+manipulating JSDoc rendering—which doesn't handle <code>getter</code> and <code>setter</code> documentation
+well— was developed to improve the resultant documentation. An example:</p>
+<pre class="prettyprint source lang-javascript"><code>class ClassName {
+  #privateProperty = &quot;stay off&quot;;
+
+  /**
+   * Gets the value.
+   * @instance // Allows the method to be referenced as `ClassName#getterMethod`
+   * @memberof ClassName // Ensures the method is shown with the `ClassName` documentation 
+   * @method // Classifies the method as a method, since JSDoc classifies it as a member
+   * @returns {string}
+   * @summary `getter` // The summary is shown above the description
+   * @variation 0 // Allows for linking to symbols with the same `namepath`
+   */
+  get privateProperty() {
+    return this.#privateProperty;
+  }
+
+  /**
+   * Sets the value of ClassName.privateProperty.
+   * @instance
+   * @memberof ClassName
+   * @method
+   * @param {string} message
+   * @summary `setter`
+   * @variation 1
+   */
+  set privateProperty(message) {
+    this.#privateProperty = message;
+  }
+}
+</code></pre>
+<p>Class method symbols are not linked by the JSDoc compiler without applying <code>@instance</code> (or the
+relevant method classification), and will be displayed in <code>Global</code> scope without specifying
+<code>@memberof</code>. Because <code>getter</code> and <code>setter</code> are separate methods, those methods are displayed twice
+with the same name in the documentation. This is initially confusing to follow, especially without
+much insight to <code>getter</code> and <code>setter</code> behavior, as the reader must parse each method for
+information, such as whether a return value or an input parameter is documented, indicating an
+identifying difference in how <code>getters</code> and <code>setters</code> are implemented. Using <code>@summary</code> allows for
+denoting each same-named method's utility, while still accurately depicting the code structure, and
+maintaining the nuanced level of detail afforded by describing the same-named methods separately.</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="ClickEventListener.html">ClickEventListener</a></li><li><a href="Items.html">Items</a></li><li><a href="Logger.html">Logger</a></li><li><a href="Score.html">Score</a></li><li><a href="Target.html">Target</a></li><li><a href="Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#pad">pad</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Sat Nov 30 2024 23:45:30 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
