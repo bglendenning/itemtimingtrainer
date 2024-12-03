@@ -30,7 +30,7 @@ export class Logger extends Communicator {
    **/
   createLogEntry(content, cssClass) {
     const paragraphElement = document.createElement("p");
-    paragraphElement.textContent = `${Timer.formatTime(this.seconds)} - ${content}`;
+    paragraphElement.textContent = `${Timer.formatTime(this.state[Timer].seconds)} - ${content}`;
     paragraphElement.classList.add(cssClass, "entry");
     this.domElements.logs.prepend(paragraphElement);
   }
