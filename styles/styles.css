@@ -1,0 +1,214 @@
+:root {
+  --color-yellow: #f5bc6c;
+  --color-green: #5f8258;
+  --color-red: #c95b51;
+  --color-blue: #5a70a0;
+  --color-white: #fff7eb;
+  --color-grey: #707070;
+  --color-light-grey: #A0A0A0;
+  --color-black: #040404;
+  --color-black-transparent: rgb(4 4 4 / 55%);
+}
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
+body {
+  background-image: url("../images/background.webp");
+  background-size: cover;
+  color: var(--color-light-grey);
+  font-family: sans-serif;
+  margin: 0;
+}
+
+a {
+  color: var(--color-white);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+em {
+  color: var(--color-white);
+  font-weight: 500;
+}
+
+h1 {
+    font-size: 1.5em;
+}
+
+h2 {
+    font-size: 1.1em;
+}
+
+/* General */
+
+item-timing-trainer {
+  background-color: var(--color-black-transparent);
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  gap: 20px;
+  height: 100vh;
+  padding: 20px;
+}
+
+/* Target */
+
+#target {
+  background-color: var(--color-green);
+  border-radius: 50%;
+  cursor: pointer;
+  filter: drop-shadow(0 0 10px var(--color-white));
+  position: absolute;
+  z-index: 1;
+}
+
+/* Items */
+
+items {
+  display: flex;
+  flex-flow: row wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.item {
+  background-size: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  border-top-right-radius: 10%;
+  border-bottom-right-radius: 10%;
+  border-bottom-left-radius: 10%;
+  border: 3px var(--color-white) solid;
+  color: var(--color-white);
+  cursor: pointer;
+  font-weight: bold;
+  height: 15vh;
+  min-height: 80px;
+  width: 15vh;
+  min-width: 80px;
+  padding: 10px;
+}
+
+a:hover, .item:hover {
+  opacity: 0.8;
+}
+
+/* Score */
+
+score {
+  background-color: var(--color-black-transparent);
+  display: flex;
+  flex-flow: row;
+  padding: 15px;
+  width: 50vw;
+  min-width: 400px;
+}
+
+score div {
+  width: 100%;
+}
+
+/* Log */
+
+log {
+  background-color: var(--color-black-transparent);
+  border-top: 1px var(--color-black) dashed;
+  flex: 1;
+  overflow: auto;
+  padding: 0 15px;
+  width: 50vw;
+  min-width: 400px;
+}
+
+#entries > p.entry {
+  font-family: monospace;
+  margin: 0;
+}
+
+#entries > p.entry:first-child {
+  margin-top: revert;
+}
+
+/* Color classes */
+
+.color-yellow {
+  color: var(--color-yellow);
+}
+
+.color-green {
+  color: var(--color-green);
+}
+
+.color-red {
+  color: var(--color-red);
+}
+
+.color-blue {
+  color: var(--color-blue);
+}
+
+.color-white {
+  color: var(--color-white);
+}
+
+.color-grey {
+  color: var(--color-grey);
+}
+
+/* Background classes */
+
+.background-color-yellow {
+  background-color: var(--color-yellow);
+}
+
+.background-color-green {
+  background-color: var(--color-green);
+}
+
+.background-color-red {
+  background-color: var(--color-red);
+}
+
+.background-color-blue {
+  background-color: var(--color-blue);
+}
+
+.background-color-white {
+  background-color: var(--color-white);
+}
+
+.background-color-grey {
+  background-color: var(--color-grey);
+}
+
+.background-image-armor {
+  background-image: url("../images/armor.webp");
+}
+
+.background-image-megahealth {
+  background-image: url("../images/megahealth.webp");
+}
+
+/* Utility classes */
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-large {
+    font-size: 2.5em;
+}
+
+.text-larger {
+    font-size: 4em;
+}

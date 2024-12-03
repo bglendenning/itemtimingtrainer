@@ -10,266 +10,57 @@
     <title>Item Timing Trainer</title>
 
     <link rel="icon" href="data:,">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Quicksand:wght@300..700&display=swap">
-
-    <script src="scripts/main.js"></script>
-
-    <style>
-      :root {
-        --color-yellow: #f5bc6c;
-        --color-green: #5f8258;
-        --color-red: #c95b51;
-        --color-blue: #5a70a0;
-        --color-white: #fff7eb;
-        --color-grey: #707070;
-        --color-light-grey: #A0A0A0;
-        --color-black: #040404;
-        --color-black-transparent: rgb(4 4 4 / 55%);
-      }
-
-      html {
-        box-sizing: border-box;
-      }
-
-      *, *:before, *:after {
-        box-sizing: inherit;
-      }
-
-      body {
-        background-image: url("images/background.webp");
-        background-size: cover;
-        color: var(--color-light-grey);
-        font-family: "Quicksand", sans-serif;
-        margin: 0;
-      }
-
-      a {
-        color: var(--color-white);
-        font-weight: 500;
-        text-decoration: none;
-      }
-
-      em {
-        color: var(--color-white);
-        font-weight: 500;
-      }
-
-      h1 {
-          font-size: 1.5em;
-      }
-
-      h2 {
-          font-size: 1.1em;
-      }
-
-      /* Target */
-
-      #target {
-        background-color: var(--color-green);
-        border-radius: 50%;
-        cursor: pointer;
-        filter: drop-shadow(0 0 10px var(--color-white));
-        position: absolute;
-        z-index: 1;
-      }
-
-      /* General */
-
-      #container {
-        background-color: var(--color-black-transparent);
-        display: flex;
-        flex-flow: column;
-        align-items: center;
-        gap: 20px;
-        height: 100vh;
-        padding: 20px;
-      }
-
-      /* Items */
-
-      #items {
-        display: flex;
-        flex-flow: row wrap;
-        gap: 20px;
-        justify-content: center;
-      }
-
-      .item {
-        background-size: 50%;
-        background-repeat: no-repeat;
-        background-position: center;
-        border-top-right-radius: 10%;
-        border-bottom-right-radius: 10%;
-        border-bottom-left-radius: 10%;
-        border: 3px var(--color-white) solid;
-        color: var(--color-white);
-        cursor: pointer;
-        font-weight: bold;
-        height: 15vh;
-        min-height: 80px;
-        width: 15vh;
-        min-width: 80px;
-        padding: 10px;
-      }
-
-      a:hover, .item:hover {
-        opacity: 0.8;
-      }
-
-      /* Logs */
-
-      #logsHeader {
-        background-color: var(--color-black-transparent);
-        display: flex;
-        flex-flow: row;
-        padding: 15px;
-        width: 50vw;
-        min-width: 400px;
-      }
-
-      #logsHeader div {
-        width: 100%;
-      }
-
-      #content {
-        background-color: var(--color-black-transparent);
-        border-top: 1px var(--color-black) dashed;
-        flex: 1;
-        overflow: auto;
-        padding: 0 15px;
-        width: 50vw;
-        min-width: 400px;
-      }
-
-      #logs > p.entry {
-          font-family: "JetBrains Mono", monospace;
-          margin: 0;
-      }
-
-      #logs > p.entry:first-child {
-          margin-top: revert;
-      }
-
-      /* Color classes */
-
-      .color-yellow {
-        color: var(--color-yellow);
-      }
-
-      .color-green {
-        color: var(--color-green);
-      }
-
-      .color-red {
-        color: var(--color-red);
-      }
-
-      .color-blue {
-        color: var(--color-blue);
-      }
-
-      .color-white {
-        color: var(--color-white);
-      }
-
-      .color-grey {
-        color: var(--color-grey);
-      }
-
-      /* Background classes */
-
-      .background-color-yellow {
-        background-color: var(--color-yellow);
-      }
-
-      .background-color-green {
-        background-color: var(--color-green);
-      }
-
-      .background-color-red {
-        background-color: var(--color-red);
-      }
-
-      .background-color-blue {
-        background-color: var(--color-blue);
-      }
-
-      .background-color-white {
-        background-color: var(--color-white);
-      }
-
-      .background-color-grey {
-        background-color: var(--color-grey);
-      }
-
-      .background-image-armor {
-        background-image: url("images/armor.webp");
-      }
-
-      .background-image-megahealth {
-        background-image: url("images/megahealth.webp");
-      }
-
-      /* Utility classes */
-
-      .text-center {
-        text-align: center;
-      }
-
-      .text-right {
-        text-align: right;
-      }
-
-      .text-large {
-          font-size: 2.5em;
-      }
-
-      .text-larger {
-          font-size: 4em;
-      }
-    </style>
+    <link rel="stylesheet" href="styles/styles.css">
+    <script src="scripts/main.js" type="module" defer></script>
   </head>
 
   <body>
-    <div id="target"></div>
-
-    <div id="container">
-      <div class="text-center text-large">
-        <a href="javascript:void(0)" id="start">Start</a>
-        <a href="javascript:void(0)" id="pause">Pause</a>
-        <a href="javascript:void(0)" id="end">End</a>
-        <a href="javascript:void(0)" id="timescaleMultiplierDecrease">-</a>
-        <a href="javascript:void(0)" id="timescaleMultiplierIncrease">+</a>
-      </div>
-
-      <div class="text-center text-larger">
-        <span id="clock">00:00</span>
-        <span id="timescaleMultiplier">1</span>x
-      </div>
-
-      <div id="items"></div>
-
-      <div class="text-center">
-        <label><input type="checkbox" id="targetVisibility"> Enable randomized target</label>
-      </div>
-
-      <div id="logsHeader">
-        <div>High: <span id="highScore"></span></div>
-
-        <div class="text-center">Session: <span id="sessionScore"></span></div>
-
-        <div class="text-right">Avg. Click: <span id="averageClick"></span>ms</div>
-      </div>
-
-      <div id="content">
-        <div class="text-right">
-          <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
+    <item-timing-trainer>
+      <timer>
+        <div class="text-center text-large">
+          <a href="javascript:void(0)" id="start">Start</a>
+          <a href="javascript:void(0)" id="pause">Pause</a>
+          <a href="javascript:void(0)" id="end">End</a>
+          <a href="javascript:void(0)" id="timescaleMultiplierDecrease">-</a>
+          <a href="javascript:void(0)" id="timescaleMultiplierIncrease">+</a>
         </div>
 
-        <div id="logs"></div>
+        <div class="text-center text-larger">
+          <span id="clock">00:00</span>
+          <span id="timescaleMultiplier">1</span>x
+        </div>
+      </timer>
+
+      <items></items>
+
+      <target>
+        <div id="target"></div>
+
+        <div class="text-center">
+          <label><input type="checkbox" id="targetVisibility"> Enable randomized target</label>
+        </div>
+      </target>
+
+      <score>
+        <div>
+          High: <span id="highScore"></span>
+        </div>
+
+        <div class="text-center">
+          Session: <span id="sessionScore"></span>
+        </div>
+
+        <div class="text-right">
+          Avg. Click: <span id="averageClick"></span>ms
+        </div>
+      </score>
+
+      <log>
+        <div class="text-right">
+          <a id="clearLogs" href="javascript:void(0)">Clear Log</a>
+        </div>
+
+        <div id="entries"></div>
 
         <h1>Arena FPS Item Timing Trainer</h1>
         <h2>
@@ -295,15 +86,7 @@
           random positions and dimensions after each click. Targets clicked are worth 1 point,
           multiplied by the timescale multiplier value.
         </p>
-      </div>
-    </div>
-
-    <script>
-      const timer = new Timer();
-      const score = new Score(timer);
-      const logger = new Logger(timer);
-      const target = new Target(timer, score);
-      const items = new Items(timer, logger, score);
-    </script>
+      </log>
+    </item-timing-trainer>
   </body>
 </html>
