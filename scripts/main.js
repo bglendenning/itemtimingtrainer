@@ -63,4 +63,4 @@ class Main {
   }
 }
 
-new Main([Score, Target, Timer, Items, Logger]);
+new Main([Score, Target, Logger. Timer, Items]);
