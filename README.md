@@ -1,5 +1,7 @@
 # Item Timing Trainer
 
+#### Try Item Timing Trainer on [GitHub Pages](https://bglendenning.github.io/itemtimingtrainer/) - [Read the Documentation](https://bglendenning.github.io/itemtimingtrainer/)
+
 Item Timing Trainer was created around the peak of [Quake Live](https://store.steampowered.com/app/282440/Quake_Live/)
 popularity. Quake Live is an arena FPS with game types in which the player benefits from developing the ability to
 anticipate when power-ups will spawn during a match. The calculations for determining when a power-up will spawn after
@@ -21,16 +23,3 @@ project as a basically-solved multifaceted problem that can adapt and evolve to 
 restrictions I've imposed are that the project will not use any frameworks or libraries for manipulating the DOM. It's
 essentially a naive web development playground to practice composing code to my standards at a given point in time
 without deadlines, client demands, or compromise with team members, for better or worse.
-
-# Usage
-
-Item Timing Trainer can be accessed at its GitHub Pages [page](https://bglendenning.github.io/itemtimingtrainer/). The
-page contains instructions for how to operate the game.
-
-# Customization
-
-[Documentation](https://bglendenning.github.io/itemtimingtrainer/documentation/)
-
-Though Item Timing Trainer is designed to represent Quake Live item properties, various features can be customized to
-represent other games or desired scenarios. To do so, clone the repository and make the desired changes. To test
-changes, open the local copy of `index.html` in a web browser. 
