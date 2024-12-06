@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: modules/Score.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: modules/Score.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module modules/Score */
+
+import { Communicator } from "./Communicator.js";
+import { Timer } from "./Timer.js";
+import { pad } from "./utilities.js";
+
+/**
+ * Manages scores and interacts with DOM elements related to them.
+ * @extends Communicator
+ */
+export class Score extends Communicator {
+  /**
+   * @property {Element} session - Displays the session score.
+   * @property {Element} high - Displays the high score.
+   * @type {Object.&lt;string, Element>}
+   */
+  domElements = {
+    session: document.getElementById("sessionScore"),
+    high: document.getElementById("highScore"),
+  };
+  /**
+   * The character-length to left-pad scores to.
+   * @type {number}
+   */
+  paddedLength = 6;
+  static name = "Score";
+  name = "Score";
+
+  /** @see {@link Communicator} */
+  constructor(messageProxy) {
+    super(messageProxy);
+  }
+
+  /**
+   * Sets the initial state.
+   * @method
+   */
+  initialize = () => {
+    this.highScore = 0;
+    this.sessionScore = 0;
+  }
+
+  #highScore;
+
+  /**
+   * The high score.
+   * @member
+   * @type {number}
+   * @variation 0
+   */
+  get highScore() {
+    return this.#highScore;
+  }
+
+  /**
+   * Sets the high score and updates the high score DOM element.
+   * @method
+   * @param {number} score - The number of points to set the high score to.
+   * @variation 1
+   */
+  set highScore(score) {
+    this.#highScore = score;
+    this.updateHighScoreElementText();
+  }
+
+  /**
+   * Sets the high score DOM element content to the current high score.
+   */
+  updateHighScoreElementText() {
+    this.domElements.high.textContent = pad(this.highScore, this.paddedLength);
+  }
+
+  #sessionScore;
+
+  /**
+   * The session score.
+   * @member
+   * @type {number}
+   * @variation 0
+   */
+  get sessionScore() {
+    return this.#sessionScore;
+  }
+
+  /**
+   * Sets the session score, updates the session score DOM element, and conditionally sets the high
+   * score.
+   * @method
+   * @param {number} points - The number of points to set the session score to.
+   * @variation 1
+   */
+  set sessionScore(points) {
+    this.#sessionScore = points;
+    this.updateSessionElementText();
+
+    if (this.#sessionScore > this.highScore) {
+      this.highScore = this.#sessionScore;
+    }
+  }
+
+  /**
+   * Multiplies the provided points value by the current timescale multiplier, adds that product to
+   * ehe session score, then sets the session score.
+   * @param {number} points - The number of points to add to the session score.
+   */
+  addPointsToSessionScore(points) {
+    this.sessionScore += points * this.state[Timer].timescaleMultiplier
+  }
+
+  /** Sets the session score DOM element content to the current session score. */
+  updateSessionElementText() {
+    this.domElements.session.textContent = pad(this.sessionScore, this.paddedLength);
+  }
+
+  /**
+   * Adds points to the session score.
+   * @method
+   * @see {@link Score#receive}
+   */
+  pointsReceive = (object, property, value) => {
+    this.addPointsToSessionScore(value);
+  }
+
+  /**
+   * Sets the session score to 0.
+   * @method
+   * @see {@link Score#receive}
+   */
+  processReceive = (object, property, value) => {
+    if (value === "end") {
+      this.sessionScore = 0;
+    }
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-Main.html">Main</a></li><li><a href="module-modules_Communicator.html">modules/Communicator</a></li><li><a href="module-modules_Items.html">modules/Items</a></li><li><a href="module-modules_Logger.html">modules/Logger</a></li><li><a href="module-modules_Score.html">modules/Score</a></li><li><a href="module-modules_Target.html">modules/Target</a></li><li><a href="module-modules_Timer.html">modules/Timer</a></li></ul><h3>Classes</h3><ul><li><a href="module-Main-Main.html">Main</a></li><li><a href="module-Main-Message.html">Message</a></li><li><a href="module-modules_Communicator.Communicator.html">Communicator</a></li><li><a href="module-modules_Items.Items.html">Items</a></li><li><a href="module-modules_Logger.Logger.html">Logger</a></li><li><a href="module-modules_Score.Score.html">Score</a></li><li><a href="module-modules_Target.Target.html">Target</a></li><li><a href="module-modules_Timer.Timer.html">Timer</a></li></ul><h3>Global</h3><ul><li><a href="global.html#pad">pad</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 4.0.4</a> on Thu Dec 05 2024 22:49:27 GMT-0600 (Central Standard Time)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,5 +1,29 @@
-import { Communicator } from "./communicator.js";
+/** @module modules/Timer */
+
+import { Communicator } from "./Communicator.js";
 import { pad } from "./utilities.js";
+
+/**
+ * A segment of time in which the active session was running. Contains a minimum of one property
+ * with the key `start`, which is assigned the return value of `performance.now()` when a session
+ * is started. A second property with the key `end`, is assigned the return value of
+ * `performance.now()` when a session is paused.
+ * @property {number} start - The time at which the session was started.
+ * @property {number} end - The time at which the session was paused.
+ * @typedef {Object.<string, number>} SessionSegment
+ */
+
+/**
+ * A representation of the session state. `null` indicates that a session has not been started or
+ * has ended. A numeric ID indicates that a session has started. `false` indicates that a session
+ * is paused.
+ * @typedef {(null|number|false)} Interval
+ */
+
+/**
+ * A numeric timestamp returned by `performance.now()`.
+ * @typedef {number} Timestamp
+ */
 
 /**
  * Manages session time and interacts with DOM elements related to it.
@@ -7,41 +31,15 @@ import { pad } from "./utilities.js";
  */
 export class Timer extends Communicator {
   /**
-   * A segment of time in which the active session was running. Contains a minimum of one property
-   * with the key `start`, which is assigned the return value of `performance.now()` when a session
-   * is started. A second property with the key `end`, is assigned the return value of
-   * `performance.now()` when a session is paused.
-   * @memberof Timer
-   * @property {number} start - The time at which the session was started.
-   * @property {number} end - The time at which the session was paused.
-   * @typedef {Object.<string, number>} SessionSegment
-   */
-
-  /**
-   * A representation of the session state. `null` indicates that a session has not been started or
-   * has ended. A numeric ID indicates that a session has started. `false` indicates that a session
-   * is paused.
-   * @memberof Timer
-   * @typedef {(null|number|false)} Interval
-   */
-
-  /**
-   * A high resolution numeric timestamp returned by `performance.now`.
-   * @memberOf Timer
-   * @typedef {number} Timestamp
-   */
-
-  /**
-   * @property {Element} clock - Displays the [elapsed session time]{@link Timer#seconds(0)}.
-   * @property {Element} start - Can be clicked to [start a session]{@link Timer#startElementClick}.
-   * @property {Element} pause - Can be clicked to [pause a session]{@link Timer#pauseElementClick}.
-   * @property {Element} end - Can be clicked to [end a session]{@link Timer#endElementClick}.
-   * @property {Element} timescaleMultiplier - Displays the session
-   * [timescale multiplier]{@link Timer#timescaleMultiplier(0)}.
-   * @property {Element} timescaleMultiplierDecrease - Can be clicked to
-   * [decrease the timescale multiplier]{@link Timer#timescaleMultiplierDecreaseElementClick}.
-   * @property {Element} timescaleMultiplierIncrease - Can be clicked to
-   * [increase the timescale multiplier]{@link Timer#timescaleMultiplierIncreaseElementClick}.
+   * @property {Element} clock - Displays the elapsed session time.
+   * @property {Element} start - Can be clicked to start a session.
+   * @property {Element} pause - Can be clicked to pause a session.
+   * @property {Element} end - Can be clicked to end a session.
+   * @property {Element} timescaleMultiplier - Displays the session timescale multiplier.
+   * @property {Element} timescaleMultiplierDecrease - Can be clicked to decrease the timescale
+   * multiplier.
+   * @property {Element} timescaleMultiplierIncrease - Can be clicked to increase the timescale
+   * multiplier.
    * @type {Object.<string, Element>}
    */
   domElements = {
@@ -56,10 +54,15 @@ export class Timer extends Communicator {
   static name = "Timer";
   name = "Timer";
 
+  /** @see {@link Communicator} */
   constructor(messageProxy) {
     super(messageProxy);
   }
 
+  /**
+   * Sets the initial state.
+   * @method
+   */
   initialize = () => {
     this.seconds = 0;
     this.interval = null;
@@ -70,11 +73,9 @@ export class Timer extends Communicator {
   #seconds;
 
   /**
-   * @instance
-   * @memberof Timer
-   * @method
-   * @returns {number} The session seconds set by [Timer.seconds]{@link Timer#seconds(1)}.
-   * @summary `getter`
+   * The session seconds.
+   * @member
+   * @type {number}
    * @variation 0
    */
   get seconds() {
@@ -82,13 +83,9 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Sets the session seconds, and updates
-   * [Timer.domElements.clock.textContent]{@link Timer#domElements}.
-   * @instance
-   * @memberof Timer
+   * Sets the session seconds, then updates the clock DOM element.
    * @method
    * @param {number} seconds - The session seconds.
-   * @summary `setter`
    * @variation 1
    */
   set seconds(seconds) {
@@ -98,9 +95,8 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Sets [Timer.domElements.clock.textContent]{@link Timer#domElements} to the return value of
-   * [Timer.seconds]{@link Timer#seconds(0)} as formatted by
-   * [Timer.formatTime]{@link Timer#formatTime}.
+   * Sets the clock DOM element to the formatted value of the session seconds.
+   * @see {@link Timer.formatTime}.
    */
   updateClockElementText() {
     this.domElements.clock.textContent = Timer.formatTime(this.#seconds);
@@ -109,12 +105,9 @@ export class Timer extends Communicator {
   #interval;
 
   /**
-   * @instance
-   * @memberof Timer
-   * @method
-   * @returns {Interval} The session interval state set by
-   * [Timer.interval]{@link Timer#interval(1)}.
-   * @summary `getter`
+   * The session interval.
+   * @member
+   * @type {setInterval|false|null}
    * @variation 0
    */
   get interval() {
@@ -122,15 +115,10 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Calls `clearInterval` if the return value of [set interval]{@link Timer#interval(0)} is an
-   * interval ID, then conditionally sets the session interval state. If the `interval` parameter
-   * value is `true`, calls `setInterval` and sets the state to the interval ID `setInterval`
-   * returns, else to the `interval` parameter value.
-   * @instance
-   * @memberof Timer
+   * Conditionally clears the session interval, then conditionally sets the interval depending on
+   * the value of the interval parameter.
    * @method
    * @param {(null|boolean|number)} interval - The interval state to set the interval to.
-   * @summary `setter`
    * @variation 1
    */
   set interval(interval) {
@@ -160,12 +148,9 @@ export class Timer extends Communicator {
   #timescaleMultiplier;
 
   /**
-   * @instance
-   * @memberof Timer
-   * @method
-   * @returns {number} The session timescale multiplier set by
-   * [Timer.timescaleMultiplier]{@link Timer#timescaleMultiplier(1)}.
-   * @summary `getter`
+   * The session timescale multiplier.
+   * @member
+   * @type {number}
    * @variation 0
    */
   get timescaleMultiplier() {
@@ -173,12 +158,9 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Sets the session timescale multiplier if the `timeScaleMultiplier` parameter is greater than 0,
-   * then updates [Timer.domElements.timescaleMultiplier.textContent]{@link Timer#domElements}.
-   * @memberof Timer
+   * Conditionally sets the timescale multiplier, then updates the timescale multiplier DOM element.
    * @method
    * @param {number} timescaleMultiplier - The number to set the session timescale multiplier to.
-   * @summary `setter`
    * @variation 1
    */
   set timescaleMultiplier(timescaleMultiplier) {
@@ -200,8 +182,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Sets [Timer.domElement.timescaleMultiplier.textContent]{@link Timer#domElements} to
-   * the return value of [Timer.timeScaleMultiplier]{@link Timer#timescaleMultiplier(0)}.
+   * Updates the timescale multiplier DOM element.
    */
   updateTimescaleMultiplierElementText() {
     this.domElements.timescaleMultiplier.textContent = this.#timescaleMultiplier.toString();
@@ -210,11 +191,10 @@ export class Timer extends Communicator {
   #sessionSegments;
 
   /**
-   * @instance
-   * @memberof Timer
-   * @method
-   * @returns {Array.<SessionSegment>} An array of [SessionSegments]{@link Timer.SessionSegment}.
-   * @summary `getter`
+   * An array with a maximum length of 2. Index 0 represents the time at which a session started.
+   * The optional index 1 represents the time at which the session paused.
+   * @member
+   * @type {Array.<SessionSegment>}
    * @variation 0
    */
   get sessionSegments() {
@@ -222,17 +202,12 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Adds a [Timestamp]{@link Timer.Timestamp} that represents the start or end value of a
-   * [SessionSegment]{@link Timer.SessionSegment}. Each session segment is initially assigned the
-   * `start` property. The `end` property is assigned when the session is paused. When the session
-   * is restarted, the setter creates a new `SessionSegment` and
-   * [adds it to Timer.sessionSegments]{@link Timer#sessionSegments(1)}. When the session ends,
-   * [Timer.sessionSegments is set to an empty array]{@link Timer#sessionSegments(1)}.
-   * @instance
-   * @memberof Timer
+   * Adds a timestamp that represents the start or end value of a session segment. Each session
+   * segment is initially assigned the `start` property. The `end` property is assigned when the
+   * session is paused. When the session is restarted, creates a new session segment and adds it to
+   * the session segments. When the session ends, sets the session segments to an empty array.
    * @method
    * @param {Array|number} value - An empty array or a number representing a timestamp.
-   * @summary `setter`
    * @variation 1
    */
   set sessionSegments(value) {
@@ -269,7 +244,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * Calculate minutes and remainder seconds of `seconds`, and left-pad both.
+   * Calculates minutes and remainder seconds of `seconds`, then left-pads both.
    * @param {number} seconds - The number of seconds to format as a time string.
    * @returns {string} A time string formatted as `mm:ss`.
    */
@@ -281,7 +256,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * A {@link Communicator} delegatee that starts a session.
+   * An event listener delegatee that starts a session.
    * @method
    */
   startElementClick = () => {
@@ -292,7 +267,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * A {@link Communicator} delegatee that pauses a session.
+   * An event listener delegatee that pauses a session.
    * @method
    */
   pauseElementClick = () => {
@@ -303,7 +278,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * A {@link Communicator} delegatee that ends a session.
+   * An event listener delegatee that ends a session.
    * @method
    */
   endElementClick = () => {
@@ -314,7 +289,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * A {@link Communicator} delegatee that decreases the session timescale multiplier.
+   * An event listener delegatee that decreases the session timescale multiplier.
    * @method
    */
   timescaleMultiplierDecreaseElementClick = () => {
@@ -322,7 +297,7 @@ export class Timer extends Communicator {
   }
 
   /**
-   * A {@link Communicator} delegatee that increases the timescale multiplier.
+   * An event listener delegatee that increases the timescale multiplier.
    * @method
    */
   timescaleMultiplierIncreaseElementClick = () => {

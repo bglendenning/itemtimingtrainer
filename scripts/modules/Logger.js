@@ -1,5 +1,7 @@
-import { Communicator } from "./communicator.js";
-import { Timer } from "./timer.js";
+/** @module modules/Logger */
+
+import { Communicator } from "./Communicator.js";
+import { Timer } from "./Timer.js";
 
 /**
  * Interacts with DOM elements related to activity logging.
@@ -18,15 +20,15 @@ export class Logger extends Communicator {
   static name = "Logger";
   name = "Logger";
 
+  /** @see {@link Communicator} */
   constructor(messageProxy) {
     super(messageProxy);
   }
 
   /**
-   * Create and style a paragraph element, then prepend it to
-   * [Logger.domElements.logs.textContent]{@link Logger#domElements}.
-   * @param {string} content - The content to assign to the paragraph element's `textContent`.
-   * @param {string} cssClass - The class to add to the paragraph element's `classList`.
+   * Creates and styles a paragraph element, then prepend it to the logs DOM element.
+   * @param {string} content - The content to assign to prepend to the logs.
+   * @param {string} cssClass - The class to add to the paragraph element.
    **/
   createLogEntry(content, cssClass) {
     const paragraphElement = document.createElement("p");
@@ -36,14 +38,17 @@ export class Logger extends Communicator {
   }
 
   /**
-    * A {@link Communicator} delegatee that clears the content of
-    * [Logger.domElements.logs.textContent]{@link Logger#domElements}
+    * An event listener delegatee that clears the logs DOM element.
     * @method
     */
   clearLogsElementClick = () => {
     this.domElements.logs.textContent = "";
   }
 
+  /**
+   * Handles log entry notifications from the application.
+   * @method
+   */
   logReceive = (object, property, value) => {
     this.createLogEntry(value["entry"], value["cssClass"]);
   }

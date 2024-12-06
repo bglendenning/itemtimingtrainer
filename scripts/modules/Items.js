@@ -1,39 +1,37 @@
-import { Communicator } from "./communicator.js";
-import { Timer } from "./timer.js";
+/** @module modules/Items */
+
+import { Communicator } from "./Communicator.js";
+import { Timer } from "./Timer.js";
 
 /**
-* Manages items and interacts with DOM elements related to them. Item {@link Communicator}
-* delegatees can accept or ignore browser `click` events depending on the item state. Item DOM
-* elements are dynamically added to the DOM. Item event delegatees are dynamically added to the
-* class object when the item elements are added to the DOM.
+ * An item configuration that contains data required for DOM interactions.
+ * @property {string} presentationName - The item name to be displayed in log entries.
+ * @property {string} domElementId - The item's DOM element `id` attribute.
+ * @property {number} startSpawnTimeSeconds - The time at which the event listener delegatee will
+ * begin accepting click events when a new session is started. Defining a non-zero value results
+ * in the item's event listener delegatee initially ignoring clicks until the item's spawn
+ * interval has elapsed.
+ * @property {number} spawnIntervalSeconds - The interval&mdash;in seconds&mdash;for which the
+ * item's event listener delegatee ignores click events after it has accepted a click event.
+ * @property {number} spawnTimeSeconds - The time&mdash;in session seconds&mdash;at which the item
+ * will begin accepting clicks events.
+ * @property {string} backgroundColorClass - The name of a CSS class that defines a background
+ * color.
+ * @property {string} backgroundImageClass - The name of a CSS class that defines a background
+ * image.
+ * @typedef {Object} Item
+ */
+
+/**
+* Manages items and interacts with DOM elements related to them. Item event listener delegatees can
+* accept or ignore browser `click` events depending on the item state. Item DOM elements are
+* dynamically added to the DOM. Item event listener delegatees are dynamically added to the class
+* object when the item elements are added to the DOM.
 * @extends Communicator
 */
 export class Items extends Communicator {
   /**
-   * An item configuration that contains data required for DOM interactions.
-   * @memberof Items
-   * @property {string} presentationName - The name to be displayed in log entries.
-   * @property {string} domElementId - The item's DOM element `id` attribute.
-   * @property {number} startSpawnTimeSeconds - The time, relative to the value returned by
-   * [Timer.seconds]{@link Timer#seconds(0)}, at which the event delegatee will begin accepting
-   * click events when a new session is started. Defining a non-zero value will result in the item's
-   * event delegatee ignoring clicks for `spawnIntervalSeconds` following a new session being
-   * started.
-   * @property {number} spawnIntervalSeconds - The interval for which the item's event delegatee
-   * ignores `click` events after it has accepted a `click` event. This is also the points value
-   * provided to [Score.addPointsToSessionScore]{@link Score#addPointsToSessionScore} when the event
-   * delegatee accepts a click.
-   * @property {number} spawnTimeSeconds - The time, relative to the value returned by
-   * [Timer.seconds]{@link Timer#seconds(0)}, at which the item will begin accepting clicks events.
-   * @property {string} backgroundColorClass - The name of a CSS class that defines a background
-   * color.
-   * @property {string} backgroundImageClass - The name of a CSS class that defines a background
-   * image.
-   * @typedef {Object<string, (string|number)>} Item
-   */
-
-  /**
-   * @property {Element} items - Contains item elements.
+   * @property {Element} items - The parent DOM element that contains item DOM elements.
    * @type {Object.<string, Element>}
    */
   domElements = {
@@ -44,11 +42,16 @@ export class Items extends Communicator {
 
   /**
    * Sets the properties required to initialize the DOM.
+   * @see {@link Communicator}
    */
   constructor(messageProxy) {
     super(messageProxy);
   }
 
+  /**
+   * Sets the initial state.
+   * @method
+   */
   initialize = () => {
     this.items = [
       {
@@ -84,11 +87,9 @@ export class Items extends Communicator {
   #items;
 
   /**
-   * @instance
-   * @memberof Items
-   * @method
-   * @returns {Array.<Items.Item>} The items' configurations.
-   * @summary `getter`
+   * The items' configurations.
+   * @member
+   * @type {Array.<Item>}
    * @variation 0
    */
   get items() {
@@ -96,12 +97,9 @@ export class Items extends Communicator {
   }
 
   /**
-   * Sets the items, and creates the items' DOM elements.
-   * @instance
-   * @memberof Items
+   * Sets the items, then creates the items' DOM elements.
    * @method
-   * @param {Array.<Items.Item>} items - The items' configurations to set.
-   * @summary `setter`
+   * @param {Array.<Item>} items - The items' configurations to set.
    * @variation 1
    */
   set items(items) {
@@ -110,10 +108,10 @@ export class Items extends Communicator {
   }
 
   /**
-   * Create a DOM element for each item in `items`, style the element, and create an event
-   * delegatee for the element and add it to the class object.
-   * @param {Array.<Items.Item>} items - The item configurations for which to create DOM elements and
-   * event delegatees.
+   * Creates a DOM element for each item, styles the elements, then creates event listener
+   * delegatees.
+   * @param {Array.<Items.Item>} items - The item configurations for which to create DOM elements
+   * and event listener delegatees.
    */
   createItemsDomElements(items) {
     items.forEach((item) => {
@@ -138,14 +136,13 @@ export class Items extends Communicator {
   }
 
   /**
-   * A {@link Communicator} delegatee that determines if the item is accepting clicks to
-   * conditionally call [Score.addPointsToSessionScore]{@link Score#addPointsToSessionScore} to
-   * handle the points value, then [creates a click log entry]{@link Logger#createLogEntry}. The
-   * points value of a clicked item is equal to `item.spawnIntervalSeconds`. One point is deducted
-   * per second that a click time follows `item.spawnIntervalSeconds`. A maximum value of
-   * `item.spawnTimeSeconds` can be deducted from the points value, meaning that the minimum number
-   * of points that can be scored is `0`.
+   * An event listener delegatee that determines if the item is accepting clicks to add points to
+   * the session score, then creates a click log entry. The initial points value of a clicked item
+   * is the item's spawn interval. One point is deducted per second that a click time follows
+   * the item's spawn time, to a maximum value of the item's spawn time, meaning that the minimum
+   * number of points that can be scored is zero.
    * @method
+   * @param {Event} event - The DOM click event.
    */
   itemsElementClick = (event) => {
     if (this.state[Timer].process === "start") {
@@ -202,9 +199,8 @@ export class Items extends Communicator {
   }
 
   /**
-   * A {@link Communicator} that clears the items DOM element, resets each item's
-   * `spawnTimeSeconds`, then sets [Items.items]{@link Items#items(1)} and recreates the items' DOM
-   * elements and event delegatees.
+   * Clears the items DOM element, resets each item's spawn time to 0, then recreates the items' DOM
+   * elements and event listener delegatees.
    * @method
    */
   processReceive = (object, property, value) => {
