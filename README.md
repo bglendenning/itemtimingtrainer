@@ -1,6 +1,6 @@
 # Item Timing Trainer
 
-#### Try Item Timing Trainer on [GitHub Pages](https://bglendenning.github.io/itemtimingtrainer/) - [Read the Documentation](https://bglendenning.github.io/itemtimingtrainer/)
+#### Try Item Timing Trainer on [GitHub Pages](https://bglendenning.github.io/itemtimingtrainer/) - [Read the Documentation](https://bglendenning.github.io/itemtimingtrainer/documentation/)
 
 Item Timing Trainer was created around the peak of [Quake Live](https://store.steampowered.com/app/282440/Quake_Live/)
 popularity. Quake Live is an arena FPS with game types in which the player benefits from developing the ability to
