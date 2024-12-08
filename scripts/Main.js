@@ -88,7 +88,7 @@ class Main {
   }
 
   /**
-   * For debugging and monitor message proxy setter behavior.
+   * For debugging and monitoring message proxy setter behavior.
    * @param {Object} object - The setter sender.
    * @param {string} property - The message property set.
    * @param {Object} value - An object containing the sender component, that component's property to
