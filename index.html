@@ -68,13 +68,11 @@
         </h2>
 
         <p>
-          When a session is started, each <em>item</em> <em>spawns</em> immediately. <em>Picking
-          up</em> an item conditionally adds points to the session score. An item's maximum points
-          value is equal to its <em>spawn delay time</em>, as indicated on the item. A point is
-          deducted from the maximum points value for each second elapsed after the item spawns that
-          the item is not picked up. The maximum value that can be deducted is the item's spawn
-          delay time. Points are multiplied by the timescale multiplier value before being added to
-          the session score.
+          Picking up an item adds points to the session score. Points values are equal to the spawn
+          intervals displayed on each item. A point is deducted from the points value for each
+          second the item was picked up late. The maximum value that can be deducted is the item's
+          spawn interval, meaning that the minimum number of points that can be scored is 0. Points
+          are multiplied by the timescale multiplier value before being added to the session score.
         </p>
 
         <p>
@@ -82,7 +80,7 @@
           the rate at which the timer elapses. <em>Pause</em> pauses the timer. <em>End</em> ends
           the session, sets the session score to 0, and resets the target to its original position.
           Check <em>Enable randomized target</em> to display an interactive target that is assigned
-          random positions and dimensions after each click. Targets clicked are worth 1 point,
+          random positions and dimensions after each click. Target clicks are worth 1 point, and are
           multiplied by the timescale multiplier value.
         </p>
       </log>
