@@ -57,7 +57,7 @@
 
       <log>
         <div class="text-right">
-          <a id="clearLogs" href="javascript:void(0)">Clear Log</a>
+          <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
         </div>
 
         <div id="entries"></div>
@@ -68,14 +68,13 @@
         </h2>
 
         <p>
-          When a session is started, each <em>item</em> <sup>(colored square)</sup> <em>spawns</em>
-          <sup>(becomes interactive)</sup> immediately. <em>Picking up</em> <sup>(clicking)</sup> an
-          item conditionally adds points to the session score. An item's maximum points value is
-          equal to its <em>spawn delay time</em> <sup>(post-click non-interactivity interval)</sup>.
-          A point is deducted from the maximum points value for each second elapsed after the item
-          spawns that the item is not picked up. The maximum value that can be deducted is the
-          item's spawn delay time. Points are multiplied by the timescale multiplier value before
-          being added to the session score.
+          When a session is started, each <em>item</em> <em>spawns</em> immediately. <em>Picking
+          up</em> an item conditionally adds points to the session score. An item's maximum points
+          value is equal to its <em>spawn delay time</em>, as indicated on the item. A point is
+          deducted from the maximum points value for each second elapsed after the item spawns that
+          the item is not picked up. The maximum value that can be deducted is the item's spawn
+          delay time. Points are multiplied by the timescale multiplier value before being added to
+          the session score.
         </p>
 
         <p>
