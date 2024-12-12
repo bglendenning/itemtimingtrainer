@@ -1,7 +1,6 @@
 # Item Timing Trainer Documentation
 
-[GitHub Repository](https://github.com/bglendenning/itemtimingtrainer/)
-[Item Timing Trainer on GitHub Pages](https://bglendenning.github.io/itemtimingtrainer/)
+[GitHub Repository](https://github.com/bglendenning/itemtimingtrainer/) - [Item Timing Trainer on GitHub Pages](https://bglendenning.github.io/itemtimingtrainer/)
 
 Item Timing Trainer is a personal project that has been overhauled twice over ~15 years. The intent
 is to develop a pure HTML, CSS, and Javascript application without the reliance on frameworks or
