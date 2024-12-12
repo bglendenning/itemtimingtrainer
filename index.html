@@ -1,89 +1,460 @@
 <!DOCTYPE html>
+<html>
+    <head>
+        <title>quake live item timing trainer</title>
+        <style>
+            body {
+                background-color: #000000;
+                color: #fff7eb;
+                font-family: sans-serif;
+            }
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="author" content="Brandan Glendenning">
-    <meta name="description" content="Arena FPS item timing trainer.">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+            body a {
+                color: #4d7175;
+                text-decoration: none;
+            }
 
-    <title>Item Timing Trainer</title>
+            body a:hover {
+                color: #6f9397;
+            }
 
-    <link rel="icon" href="data:,">
-    <link rel="stylesheet" href="styles/styles.css">
-    <script src="scripts/Main.js" type="module" defer></script>
-  </head>
+            #itemArmorRed {
+                background-color: #c95b51;
+            }
 
-  <body>
-    <item-timing-trainer>
-      <timer>
-        <div class="text-center text-large">
-          <a href="javascript:void(0)" id="start">Start</a>
-          <a href="javascript:void(0)" id="pause">Pause</a>
-          <a href="javascript:void(0)" id="end">End</a>
-          <a href="javascript:void(0)" id="timescaleMultiplierDecrease">-</a>
-          <a href="javascript:void(0)" id="timescaleMultiplierIncrease">+</a>
+            #itemArmorRed:hover {
+                background-color: #eb7d73;
+            }
+
+            #itemArmorYellow {
+                background-color: #f5bc6c;
+            }
+
+            #itemArmorYellow:hover {
+                background-color: #f7de8e;
+            }
+
+            #itemHealthMega {
+                background-color: #4d7175;
+            }
+
+            #itemHealthMega:hover {
+                background-color: #6f9397;
+            }
+
+            #itemArmorRed, #itemArmorYellow, #itemHealthMega {
+                cursor: pointer;
+                height: 100px;
+                width: 100px;
+            }
+
+            #itemArmorRed, #itemArmorYellow {
+                margin-right: 20px
+            }
+
+            #items {
+                margin: 20px auto 0 auto;
+                width: 340px;
+            }
+
+            #log {
+                border-left: 1px #fff7eb dotted;
+                margin: 40px auto 0 auto;
+                padding-left: 20px;
+                width: 600px;
+            }
+
+            #log h1 {
+                font-size: 1em;
+            }
+
+            #logClear {
+                margin-top: 20px;
+            }
+
+            #logScoreHigh {
+                float: left;
+            }
+
+            #logScoreSession {
+                text-align: right;
+            }
+
+            #logText {
+                height: 300px;
+                margin: 20px auto 0 auto;
+                overflow: auto;
+            }
+
+            #target {
+                margin-top: 20px;
+                text-align: center;
+            }
+
+            #targetObject {
+                background-color: #5f8258;
+                height: 25px;
+                position: absolute;
+                width: 25px;
+            }
+
+            #timer div {
+                font-size: 50px;
+                padding: 0 5px 0 5px;
+            }
+
+            #items div {
+                float: left;
+            }
+
+            #timerDisplay, #timerAdmin {
+                text-align: center;
+            }
+
+            .clear {
+                clear: both;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="targetObject" onClick="targetObjectClick()"></div>
+        <div id="timer">
+            <div id="timerAdmin">
+                <span id="timerStart"><a href="#" onClick="timerStart()">start</a></span>
+                <span id="timerStop"><a href="#" onClick="timerStop()">stop</a></span>
+                <span id="timerReset"><a href="#" onClick="timerReset()">reset</a></span>
+                <span id="timerSpeedReduce"><a href="#" onClick="timerSpeedDecrease()" title="decrease rate of elapse">-</a></span>
+                <span id="timerSpeedIncrease"><a href="#" onClick="timerSpeedIncrease()" title="increase rate of elapse">+</a></span>
+            </div>
+            <div class="clear"></div>
+            <div id="timerDisplay">
+                <span id="timerClock">00:00</span>
+                <span id="timerMultiplier">1x</span>
+            </div>
         </div>
-
-        <div class="text-center text-larger">
-          <span id="clock">00:00</span>
-          <span id="timescaleMultiplier">1</span>x
+        <div id="items">
+            <div id="itemArmorRed" onClick="itemArmorRedClick()"></div>
+            <div id="itemArmorYellow" onClick="itemArmorYellowClick()"></div>
+            <div id="itemHealthMega" onClick="itemHealthMegaClick()"></div>
         </div>
-      </timer>
-
-      <items></items>
-
-      <target>
-        <div id="target"></div>
-
-        <div class="text-center">
-          <label><input type="checkbox" id="targetVisibility"> Enable randomized target</label>
+        <div class="clear"></div>
+        <div id="target">
+            <div id="targetForm">
+                <form>
+                    <label onClick="targetFormCheckClick()"><input type="checkbox" id="targetFormCheck"> enable randomized target</label>
+                </form>
+            </div>
         </div>
-      </target>
-
-      <score>
-        <div>
-          High: <span id="highScore"></span>
+        <div id="log">
+            <div id="logScoreHigh">high score: 0000000000</div>
+            <div id="logScoreSession">score: 0000000000</div>
+            <div id="logText">
+                <h1>instructions</h1>
+                <p>click the large colored squares to simulate picking up red armor (red square), yellow armor (yellow square), and mega health (blue square). each item pick up is worth its respawn time in points multiplied by the current speed multiplier value:</p>
+                <ul>
+                    <li><b>red armor</b>: 25 points</li>
+                    <li><b>yellow armor</b>: 25 points</li>
+                    <li><b>mega health</b>: 35 points</li>
+                </ul>
+                <p>click the small green square to earn points while waiting for items to respawn. each green square clicked is worth 1 point multiplied by the current speed multiplier value.</p>
+                <h1>controls</h1>
+                <ul>
+                    <li><b>start</b>: starts the timer</li>
+                    <li><b>stop</b>: stops the timer</li>
+                    <li><b>reset</b>: resets the timer and the current session score to 0</li>
+                    <li><b>-/+</b>: decrease or increase the rate at which the timer counts up</li>
+                    <li><b>enable randomized target</b>: show or hide green target square</li>
+                </ul>
+            </div>
+            <div id="logClear"><a href="#" onClick="logClear()">clear log</a></div>
         </div>
+        <script type="text/javascript">
+            /* log */
 
-        <div class="text-center">
-          Session: <span id="sessionScore"></span>
-        </div>
+            // document object model
+            var logId = document.getElementById("logText");
 
-        <div class="text-right">
-          Avg. Click: <span id="averageClick"></span>ms
-        </div>
-      </score>
+            // text colors
+            var logColorYellow = "#f5bc6c";
+            var logColorGreen = "#5f8258";
+            var logColorRed = "#c95b51";
+            var logColorBlue = "#4d7175";
+            var logColorWhite = "#fff7eb";
 
-      <log>
-        <div class="text-right">
-          <a id="clearLogs" href="javascript:void(0)">Clear Logs</a>
-        </div>
+            // functions
 
-        <div id="entries"></div>
+            function logWrite(text, color) {
+                logId.innerHTML = "<span style='color: " + color + ";'>" + text + "</style><br />" + logId.innerHTML;
+            }
 
-        <h1>Arena FPS Item Timing Trainer</h1>
-        <h2>
-          By Brandan Glendenning (<a href="https://github.com/bglendenning/itemtimingtrainer" target="new">GitHub</a>)
-        </h2>
+            function logClear() {
+                logId.innerHTML = "";
+            }
 
-        <p>
-          Picking up an item adds points to the session score. Points values are equal to the spawn
-          intervals displayed on each item. A point is deducted from the points value for each
-          second the item was picked up late. The maximum value that can be deducted is the item's
-          spawn interval, meaning that the minimum number of points that can be scored is 0. Points
-          are multiplied by the timescale multiplier value before being added to the session score.
-        </p>
+            /* timer */
 
-        <p>
-          <em>Start</em> begins or continues a paused session. <em>-</em> & <em>+</em> manipulate
-          the rate at which the timer elapses. <em>Pause</em> pauses the timer. <em>End</em> ends
-          the session, sets the session score to 0, and resets the target to its original position.
-          Check <em>Enable randomized target</em> to display an interactive target that is assigned
-          random positions and dimensions after each click. Target clicks are worth 1 point, and are
-          multiplied by the timescale multiplier value.
-        </p>
-      </log>
-    </item-timing-trainer>
-  </body>
+            // document object model vars
+            var timerId = document.getElementById("timerClock");
+            var timerMultiplierId = document.getElementById("timerMultiplier");
+
+            // misc. vars
+            var timerSeconds = 0;
+            var timerMultiplier = 1;
+            var timerInterval;
+            var timerState = 0;
+
+            // admin functions
+
+            function timerTime(seconds) {
+                return pad(parseInt(seconds/60), 2) + ":" + pad(seconds%60, 2)
+            }
+
+            function timerReset() {
+                logWrite(timerTime(timerSeconds) + " - timer and score reset to default values", logColorWhite);
+                timerSeconds = 0;
+                timerMultiplier = 1;
+                itemArmorRedSpawn = 0;
+                itemArmorYellowSpawn = 0;
+                itemHealthMegaSpawn = 0;
+                timerId.innerHTML = timerTime(timerSeconds);
+                timerMultiplierId.innerHTML = timerMultiplier + "x";
+                timerStop();
+                scoreReset();
+                targetPositionReset();
+            }
+
+            function timerStart() {
+                if (timerState == 0) {
+                    logWrite(timerTime(timerSeconds) + " - timer started", logColorWhite);
+                    timerInterval = setInterval(setTime, (1000 / timerMultiplier));
+                    timerState = 1;
+                    targetPositionRandom();
+                }
+            }
+
+            function timerStop() {
+                if (timerState == 1) {
+                    logWrite(timerTime(timerSeconds) + " - timer stopped", logColorWhite);
+                    clearInterval(timerInterval);
+                    timerState = 0;
+                }
+            }
+
+            function setTime() {
+                ++timerSeconds;
+                timerId.innerHTML = timerTime(timerSeconds);
+            }
+
+            // display functions
+
+            function timerSpeedIncrease() {
+                if (timerMultiplier >= 1) {
+                    ++timerMultiplier;
+                    timerMultiplierId.innerHTML = timerMultiplier + "x";
+                    logWrite(timerTime(timerSeconds) + " - timer multiplier increased to " + timerMultiplier + "x", logColorWhite);
+                    if (timerState == 1) {
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(setTime, (1000 / timerMultiplier));
+                    }
+                } else if (timerMultiplier > 0 && timerMultiplier <= 1) {
+                    timerMultiplier = timerMultiplier + .25;
+                    timerMultiplierId.innerHTML = timerMultiplier + "x";
+                    logWrite(timerTime(timerSeconds) + " - timer multiplier increased to " + timerMultiplier + "x", logColorWhite);
+                    if (timerState == 1) {
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(setTime, (1000 / timerMultiplier));
+                    }
+
+                }
+            }
+
+            function timerSpeedDecrease() {
+                if (timerMultiplier > 1) {
+                    --timerMultiplier;
+                    timerMultiplierId.innerHTML = timerMultiplier + "x";
+                    logWrite(timerTime(timerSeconds) + " - timer multiplier decreased to " + timerMultiplier + "x", logColorWhite);
+                    if (timerState == 1) {
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(setTime, (1000 / timerMultiplier));
+                    }
+                } else if (timerMultiplier > .25 && timerMultiplier <= 1) {
+                    timerMultiplier = timerMultiplier - .25;
+                    timerMultiplierId.innerHTML = timerMultiplier + "x";
+                    logWrite(timerTime(timerSeconds) + " - timer multiplier decreased to " + timerMultiplier + "x", logColorWhite);
+                    if (timerState == 1) {
+                        clearInterval(timerInterval);
+                        timerInterval = setInterval(setTime, (1000 / timerMultiplier));
+                    }
+                }
+            }
+
+            /* item */
+
+            // document object model vars
+            var itemArmorRedId = document.getElementById("itemArmorRed");
+            var itemArmorYellowId = document.getElementById("itemArmorYellow");
+            var itemHealthMegaId = document.getElementById("itemHealthMega");
+
+            // default pickup and spawn state vars
+            var itemArmorRedPickup = 0;
+            var itemArmorYellowPickup = 0;
+            var itemHealthMegaPickup = 0;
+            var itemArmorRedSpawn = 0;
+            var itemArmorYellowSpawn = 0;
+            var itemHealthMegaSpawn = 0;
+
+            // score value vars
+            var itemArmorRedScoreValue = 25;
+            var itemArmorYellowScoreValue = 25;
+            var itemHealthMegaScoreValue = 35;
+
+            // functions
+
+            function itemArmorRedClick() {
+                if (timerState == 1) {
+                    var timeDifference;
+                    itemArmorRedPickup = timerSeconds;
+
+                    if (itemArmorRedPickup >= itemArmorRedSpawn) {
+                        timeDifference = itemArmorRedPickup - itemArmorRedSpawn;
+                        itemArmorRedSpawn = timerSeconds + 25;
+                        scoreAdd(itemArmorRedScoreValue);
+                        logWrite(timerTime(timerSeconds) + " - red armor pickup " + timerTime(timeDifference) + " after spawn", logColorGreen);
+                    } else {
+                        timeDifference = itemArmorRedSpawn - itemArmorRedPickup;
+                        logWrite(timerTime(timerSeconds) + " - red armor pickup attempted " + timerTime(timeDifference) + " before spawn", logColorRed);
+                    }
+                }
+            }
+
+            function itemArmorYellowClick() {
+                if (timerState == 1) {
+                    var timeDifference;
+                    itemArmorYellowPickup = timerSeconds;
+
+                    if (itemArmorYellowPickup >= itemArmorYellowSpawn) {
+                        timeDifference = itemArmorYellowPickup - itemArmorYellowSpawn;
+                        itemArmorYellowSpawn = timerSeconds + 25;
+                        scoreAdd(itemArmorYellowScoreValue);
+                        logWrite(timerTime(timerSeconds) + " - yellow armor pickup " + timerTime(timeDifference) + " after spawn", logColorGreen);
+                    } else {
+                        timeDifference = itemArmorYellowSpawn - itemArmorYellowPickup;
+                        logWrite(timerTime(timerSeconds) + " - yellow armor pickup attempted " + timerTime(timeDifference) + " before spawn", logColorRed);
+                    }
+                }
+            }
+
+            function itemHealthMegaClick() {
+                if (timerState == 1) {
+                    var timeDifference;
+                    itemHealthMegaPickup = timerSeconds;
+
+                    if (itemHealthMegaPickup >= itemHealthMegaSpawn) {
+                        timeDifference = itemHealthMegaPickup - itemHealthMegaSpawn;
+                        itemHealthMegaSpawn = timerSeconds + 35;
+                        scoreAdd(itemHealthMegaScoreValue);
+                        logWrite(timerTime(timerSeconds) + " - mega health pickup " + timerTime(timeDifference) + " after spawn", logColorGreen);
+                    } else {
+                        timeDifference = itemHealthMegaSpawn - itemHealthMegaPickup;
+                        logWrite(timerTime(timerSeconds) + " - mega health pickup attempted " + timerTime(timeDifference) + " before spawn", logColorRed);
+                    }
+                }
+            }
+
+            /* target */
+
+            // document object model vars
+            var targetObjectId = document.getElementById("targetObject");
+            var targetFormCheck = document.getElementById("targetFormCheck");
+
+            targetFormCheck.checked = true; // default checked value varies by browser
+
+            // default target object properties
+            var targetObjectHeight = 25;
+            var targetObjectWidth = 25;
+
+            // score value
+            var targetObjectScoreValue = 1;
+
+            // functions
+
+            targetPositionReset();
+
+            function targetObjectClick() {
+                targetPositionRandom();
+
+                if (timerState == 1) {
+                    scoreAdd(targetObjectScoreValue);
+                }
+            }
+
+            function targetPositionSet(left, top) {
+                targetObjectId.style.left = left + "px";
+                targetObjectId.style.top = top + "px";
+            }
+
+            function targetPositionRandom() {
+                var maxPositionLeft = window.innerWidth - targetObjectWidth - 50;
+                var maxPositionTop = window.innerHeight - targetObjectHeight - 50;
+                var targetPositionLeft = Math.floor((Math.random() * maxPositionLeft) + 50);
+                var targetPositionTop = Math.floor((Math.random() * maxPositionTop) + 50);
+                targetPositionSet(targetPositionLeft, targetPositionTop);
+            }
+
+            function targetPositionReset() {
+                targetPositionSet(50,50);
+            }
+
+            function targetSizeSet() {
+                // next version
+            }
+
+            function targetFormCheckClick() {
+                if (targetFormCheck.checked) {
+                    targetObjectId.style.visibility = "visible";
+                } else {
+                    targetObjectId.style.visibility = "hidden";
+                }
+            }
+
+            /* score */
+
+            // document object model vars
+            var scoreSessionId = document.getElementById("logScoreSession");
+            var scoreHighId = document.getElementById("logScoreHigh");
+
+            // default score values
+            var scoreCurrent = 0;
+            var scoreHigh = 0;
+            var scoreLength = 10;
+
+            // functions
+
+            function scoreAdd(value) {
+                scoreCurrent = scoreCurrent + Math.floor(value * timerMultiplier);
+                scoreSessionId.innerHTML = "score: " + pad(scoreCurrent, scoreLength);
+                if (scoreCurrent > scoreHigh) {
+                    scoreHigh = scoreCurrent;
+                    scoreHighId.innerHTML = "high score: " + pad(scoreHigh, scoreLength);
+                }
+            }
+
+            function scoreReset() {
+                scoreCurrent = 0;
+                logScoreSession.innerHTML = "score: " + pad(scoreCurrent, scoreLength);
+            }
+
+            /* misc. */
+
+            function pad(value, length) {
+                var valueString = value.toString();
+
+                while (valueString.length < length) {
+                    valueString = "0" + valueString;
+                }
+
+                return valueString;
+            }
+        </script>
+    </body>
 </html>
